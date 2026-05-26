@@ -1,0 +1,400 @@
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# Prometheus ConfigMap
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: rentrelay
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval:     15s
+      evaluation_interval: 15s
+
+    rule_files:
+      - /etc/prometheus/rules/*.yml
+
+    scrape_configs:
+      # Scrape all pods annotated with prometheus.io/scrape: "true"
+      - job_name: 'rentrelay-services'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: [rentrelay]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            target_label: __address__
+            regex: (.+)
+            replacement: ${1}
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: service
+
+      # Kubernetes API server
+      - job_name: 'kubernetes-apiserver'
+        kubernetes_sd_configs:
+          - role: endpoints
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+  alert_rules.yml: |
+    groups:
+      - name: rentrelay_alerts
+        rules:
+          # Matching service pod is down
+          - alert: MatchingServiceDown
+            expr: up{service="matching-service"} == 0
+            for: 30s
+            labels:
+              severity: critical
+            annotations:
+              summary: "Matching service pod is down"
+              description: "No matching service pods are responding. Tenant-landlord matching is unavailable."
+
+          # Storage worker heartbeat missed
+          - alert: StorageWorkerHeartbeatMissed
+            expr: rentrelay_worker_last_heartbeat_seconds > 10
+            for: 15s
+            labels:
+              severity: critical
+            annotations:
+              summary: "Storage worker {{ $labels.worker_id }} missed heartbeat"
+              description: "Worker has not sent heartbeat in {{ $value }}s. Replication may be degraded."
+
+          # Quorum write failures
+          - alert: QuorumWriteFailures
+            expr: rate(rentrelay_quorum_write_failures_total[5m]) > 0.1
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High quorum write failure rate"
+              description: "More than 10% of quorum writes are failing. Check worker health."
+
+          # Matching queue depth too high
+          - alert: MatchingQueueDepthHigh
+            expr: matching_queue_depth > 200
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Matching queue is backing up"
+              description: "Matching queue depth is {{ $value }}. Consider manual scale-out."
+
+          # Agreement escrow state stuck
+          - alert: EscrowStateStuck
+            expr: rentrelay_agreements_in_state{state="ESCROW_HELD"} > 100
+            for: 10m
+            labels:
+              severity: warning
+
+          # High dispute rate
+          - alert: HighDisputeRate
+            expr: rate(rentrelay_disputes_raised_total[1h]) > 10
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Unusually high dispute rate"
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# Prometheus Deployment
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus-sa
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.50.0
+          ports:
+            - containerPort: 9090
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention.time=15d"
+            - "--web.enable-lifecycle"
+            - "--web.enable-admin-api"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: prometheus-data
+              mountPath: /prometheus
+          resources:
+            requests: { cpu: 200m, memory: 512Mi }
+            limits:   { cpu: 1,    memory: 2Gi }
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+        - name: prometheus-data
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: rentrelay
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+
+---
+# RBAC for Prometheus to scrape K8s pod metrics
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-sa
+  namespace: rentrelay
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-role
+rules:
+  - apiGroups: [""]
+    resources: [nodes, nodes/proxy, services, endpoints, pods]
+    verbs: [get, list, watch]
+  - nonResourceURLs: [/metrics]
+    verbs: [get]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-role
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-sa
+    namespace: rentrelay
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# Grafana Deployment
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:10.2.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: "admin"
+            - name: GF_SERVER_ROOT_URL
+              value: "http://grafana.rentrelay.local"
+            - name: GF_DATASOURCES_DEFAULT_URL
+              value: "http://prometheus:9090"
+          volumeMounts:
+            - name: grafana-data
+              mountPath: /var/lib/grafana
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits:   { cpu: 500m, memory: 1Gi }
+      volumes:
+        - name: grafana-data
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: rentrelay
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# Ingress — exposes API Gateway and dashboards
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rentrelay-ingress
+  namespace: rentrelay
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: api.rentrelay.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 80
+
+    - host: grafana.rentrelay.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+
+    - host: prometheus.rentrelay.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus
+                port:
+                  number: 9090
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# NetworkPolicy — restrict inter-service communication
+# Only allow services that actually need to talk to each other
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: matching-service-netpol
+  namespace: rentrelay
+spec:
+  podSelector:
+    matchLabels:
+      app: matching-service
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api-gateway
+        - podSelector:
+            matchLabels:
+              app: tenant-service
+        - podSelector:
+            matchLabels:
+              app: prometheus
+      ports:
+        - protocol: TCP
+          port: 50056
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: landlord-service
+        - podSelector:
+            matchLabels:
+              app: tenant-service
+        - podSelector:
+            matchLabels:
+              app: property-service
+        - podSelector:
+            matchLabels:
+              app: agreement-service
+        - podSelector:
+            matchLabels:
+              app: notification-service
+      ports:
+        - protocol: TCP
+          port: 50051
+        - protocol: TCP
+          port: 50052
+        - protocol: TCP
+          port: 50053
+        - protocol: TCP
+          port: 50054
+        - protocol: TCP
+          port: 50055
+        - protocol: TCP
+          port: 50057
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: storage-worker-netpol
+  namespace: rentrelay
+spec:
+  podSelector:
+    matchLabels:
+      app: storage-worker
+  policyTypes:
+    - Ingress
+  ingress:
+    # Only controller and agreement-service can write to workers
+    - from:
+        - podSelector:
+            matchLabels:
+              app: storage-controller
+        - podSelector:
+            matchLabels:
+              app: agreement-service
+        - podSelector:
+            matchLabels:
+              app: prometheus
+      ports:
+        - protocol: TCP
+          port: 50061
+        - protocol: TCP
+          port: 8081

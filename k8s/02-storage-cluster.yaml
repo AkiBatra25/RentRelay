@@ -1,0 +1,246 @@
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# STORAGE CONTROLLER  (Proj 2 — Single Controller Node)
+# Maintains partition table, routes clients to correct worker,
+# detects heartbeat failures, triggers rebalancing
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: storage-controller
+  namespace: rentrelay
+  labels:
+    app: storage-controller
+    component: distributed-storage
+spec:
+  serviceName: storage-controller
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-controller
+  template:
+    metadata:
+      labels:
+        app: storage-controller
+        component: distributed-storage
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port:   "8080"
+    spec:
+      containers:
+        - name: storage-controller
+          image: rentrelay/storage-controller:latest
+          ports:
+            - containerPort: 50060    # gRPC (clients query partition table)
+            - containerPort: 8080     # Prometheus metrics
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50060"
+            - name: METRICS_PORT
+              value: "8080"
+            - name: WORKER_ADDRS
+              value: "storage-worker-0.storage-worker:50061,storage-worker-1.storage-worker:50061,storage-worker-2.storage-worker:50061,storage-worker-3.storage-worker:50061"
+            - name: HEARTBEAT_TIMEOUT_SEC
+              value: "10"
+            - name: REBALANCE_THRESHOLD_PCT
+              value: "20"    # rebalance if load diff > 20%
+          resources:
+            requests: { cpu: 200m, memory: 256Mi }
+            limits:   { cpu: 1,    memory: 1Gi }
+          livenessProbe:
+            grpc:
+              port: 50060
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            grpc:
+              port: 50060
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: controller-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: controller-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi
+
+---
+# Headless service for controller (StatefulSet DNS)
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-controller
+  namespace: rentrelay
+spec:
+  clusterIP: None
+  selector:
+    app: storage-controller
+  ports:
+    - name: grpc
+      port: 50060
+      targetPort: 50060
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# STORAGE WORKERS  (Proj 2 — 4 Worker Nodes)
+# Each worker owns a shard of the key space.
+# Each record is replicated to 2 additional workers (3 total).
+# Workers send heartbeat to controller every 5 seconds.
+# On receiving rebalance commands from controller, workers
+# stream keys to the target worker via TransferKeys RPC.
+#
+# Pod names:  storage-worker-0, storage-worker-1,
+#             storage-worker-2, storage-worker-3
+#
+# Shard assignment (consistent hash ring, 256 slots):
+#   worker-0: slots  0  – 63
+#   worker-1: slots 64  – 127
+#   worker-2: slots 128 – 191
+#   worker-3: slots 192 – 255
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: storage-worker
+  namespace: rentrelay
+  labels:
+    app: storage-worker
+    component: distributed-storage
+spec:
+  serviceName: storage-worker
+  replicas: 4
+  selector:
+    matchLabels:
+      app: storage-worker
+  template:
+    metadata:
+      labels:
+        app: storage-worker
+        component: distributed-storage
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port:   "8081"
+    spec:
+      containers:
+        - name: storage-worker
+          image: rentrelay/storage-worker:latest
+          ports:
+            - containerPort: 50061    # gRPC worker API
+            - containerPort: 8081     # Prometheus metrics
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50061"
+            - name: METRICS_PORT
+              value: "8081"
+            - name: CONTROLLER_ADDR
+              value: "storage-controller-0.storage-controller:50060"
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name    # e.g. "storage-worker-0"
+            - name: HEARTBEAT_INTERVAL_SEC
+              value: "5"
+            - name: REPLICATION_ASYNC_WORKERS
+              value: "4"
+          resources:
+            requests: { cpu: 200m, memory: 512Mi }
+            limits:   { cpu: 2,    memory: 4Gi }
+          livenessProbe:
+            grpc:
+              port: 50061
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            grpc:
+              port: 50061
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: worker-data
+              mountPath: /data
+            - name: worker-wal
+              mountPath: /wal      # Write-Ahead Log for durability
+  volumeClaimTemplates:
+    - metadata:
+        name: worker-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+    - metadata:
+        name: worker-wal
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi
+
+---
+# Headless service for workers (StatefulSet DNS)
+# Pods reachable as: storage-worker-{0..3}.storage-worker.rentrelay.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-worker
+  namespace: rentrelay
+spec:
+  clusterIP: None
+  selector:
+    app: storage-worker
+  ports:
+    - name: grpc
+      port: 50061
+      targetPort: 50061
+    - name: metrics
+      port: 8081
+      targetPort: 8081
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# PodDisruptionBudget for storage workers
+# Ensures at least 2 workers are always available (quorum guarantee)
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: storage-worker-pdb
+  namespace: rentrelay
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: storage-worker
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# PodDisruptionBudget for storage controller
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: storage-controller-pdb
+  namespace: rentrelay
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: storage-controller

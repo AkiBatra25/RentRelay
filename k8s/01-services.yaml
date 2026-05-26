@@ -1,0 +1,732 @@
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# MongoDB StatefulSet — 3-node replica set
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: rentrelay
+spec:
+  serviceName: mongodb
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:7.0
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: rentrelay
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rentrelay-secrets
+                  key: MONGO_ROOT_PASSWORD
+          args:
+            - "--replSet"
+            - "rs0"
+            - "--bind_ip_all"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+          resources:
+            requests: { cpu: 500m, memory: 1Gi }
+            limits:   { cpu: 2,    memory: 4Gi }
+          livenessProbe:
+            exec:
+              command: ["mongosh", "--eval", "db.adminCommand('ping')"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: rentrelay
+spec:
+  clusterIP: None
+  selector:
+    app: mongodb
+  ports:
+    - port: 27017
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# Redis StatefulSet
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: rentrelay
+spec:
+  serviceName: redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          args: ["--requirepass", "$(REDIS_PASSWORD)"]
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rentrelay-secrets
+                  key: REDIS_PASSWORD
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits:   { cpu: 500m, memory: 1Gi }
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: rentrelay
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# USER SERVICE
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: rentrelay
+  labels:
+    app: user-service
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+        version: v1
+    spec:
+      containers:
+        - name: user-service
+          image: rentrelay/user-service:latest
+          ports:
+            - containerPort: 50051   # gRPC
+            - containerPort: 8080    # health/metrics
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50051"
+            - name: SERVICE_NAME
+              value: "user-service"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          livenessProbe:
+            grpc:
+              port: 50051
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            grpc:
+              port: 50051
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: user-service
+  ports:
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# PROPERTY SERVICE
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: property-service
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: property-service
+  template:
+    metadata:
+      labels:
+        app: property-service
+    spec:
+      containers:
+        - name: property-service
+          image: rentrelay/property-service:latest
+          ports:
+            - containerPort: 50052
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50052"
+            - name: SERVICE_NAME
+              value: "property-service"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          livenessProbe:
+            grpc:
+              port: 50052
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: property-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: property-service
+  ports:
+    - name: grpc
+      port: 50052
+      targetPort: 50052
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# LANDLORD SERVICE
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: landlord-service
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: landlord-service
+  template:
+    metadata:
+      labels:
+        app: landlord-service
+    spec:
+      containers:
+        - name: landlord-service
+          image: rentrelay/landlord-service:latest
+          ports:
+            - containerPort: 50053
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50053"
+            - name: PROPERTY_SERVICE_ADDR
+              value: "property-service:50052"
+            - name: AGREEMENT_SERVICE_ADDR
+              value: "agreement-service:50055"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          livenessProbe:
+            grpc:
+              port: 50053
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: landlord-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: landlord-service
+  ports:
+    - name: grpc
+      port: 50053
+      targetPort: 50053
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# TENANT SERVICE
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenant-service
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tenant-service
+  template:
+    metadata:
+      labels:
+        app: tenant-service
+    spec:
+      containers:
+        - name: tenant-service
+          image: rentrelay/tenant-service:latest
+          ports:
+            - containerPort: 50054
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50054"
+            - name: AGREEMENT_SERVICE_ADDR
+              value: "agreement-service:50055"
+            - name: MATCHING_SERVICE_ADDR
+              value: "matching-service:50056"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          livenessProbe:
+            grpc:
+              port: 50054
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tenant-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: tenant-service
+  ports:
+    - name: grpc
+      port: 50054
+      targetPort: 50054
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# AGREEMENT SERVICE (Escrow state machine)
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agreement-service
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agreement-service
+  template:
+    metadata:
+      labels:
+        app: agreement-service
+    spec:
+      containers:
+        - name: agreement-service
+          image: rentrelay/agreement-service:latest
+          ports:
+            - containerPort: 50055
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50055"
+            - name: STORAGE_CONTROLLER_ADDR
+              value: "storage-controller:50060"
+            - name: DOCUMENT_SERVICE_ADDR
+              value: "document-service:50058"
+            - name: NOTIFICATION_SERVICE_ADDR
+              value: "notification-service:50057"
+          resources:
+            requests: { cpu: 200m, memory: 256Mi }
+            limits:   { cpu: 1,    memory: 1Gi }
+          livenessProbe:
+            grpc:
+              port: 50055
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agreement-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: agreement-service
+  ports:
+    - name: grpc
+      port: 50055
+      targetPort: 50055
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# MATCHING SERVICE
+# *** THIS IS THE SERVICE THAT SCALES 1 → 5 via HPA (PDF requirement) ***
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-service
+  namespace: rentrelay
+  labels:
+    app: matching-service
+spec:
+  replicas: 1          # starts at 1, HPA scales to 5
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port:   "8080"
+        prometheus.io/path:   "/metrics"
+    spec:
+      containers:
+        - name: matching-service
+          image: rentrelay/matching-service:latest
+          ports:
+            - containerPort: 50056    # gRPC
+            - containerPort: 8080     # Prometheus metrics
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50056"
+            - name: LANDLORD_SERVICE_ADDR
+              value: "landlord-service:50053"
+            - name: TENANT_SERVICE_ADDR
+              value: "tenant-service:50054"
+            - name: AGREEMENT_SERVICE_ADDR
+              value: "agreement-service:50055"
+            - name: NOTIFICATION_SERVICE_ADDR
+              value: "notification-service:50057"
+            - name: PROPERTY_SERVICE_ADDR
+              value: "property-service:50052"
+          resources:
+            requests: { cpu: 200m, memory: 256Mi }
+            limits:   { cpu: 1,    memory: 1Gi }
+          livenessProbe:
+            grpc:
+              port: 50056
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            grpc:
+              port: 50056
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: matching-service
+  ports:
+    - name: grpc
+      port: 50056
+      targetPort: 50056
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+
+---
+# HPA for Matching Service: scales 1 → 5 pods on CPU or custom queue metric
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: matching-service-hpa
+  namespace: rentrelay
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: matching-service
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: Pods
+      pods:
+        metric:
+          name: matching_queue_depth   # custom Prometheus metric
+        target:
+          type: AverageValue
+          averageValue: "50"           # scale out when queue > 50 per pod
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Pods
+          value: 2
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 120
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTIFICATION SERVICE
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: rentrelay/notification-service:latest
+          ports:
+            - containerPort: 50057
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50057"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          livenessProbe:
+            grpc:
+              port: 50057
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - name: grpc
+      port: 50057
+      targetPort: 50057
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# DOCUMENT SERVICE
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: document-service
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: document-service
+  template:
+    metadata:
+      labels:
+        app: document-service
+    spec:
+      containers:
+        - name: document-service
+          image: rentrelay/document-service:latest
+          ports:
+            - containerPort: 50058
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50058"
+            - name: MINIO_ENDPOINT
+              value: "minio:9000"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+          livenessProbe:
+            grpc:
+              port: 50058
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: document-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: document-service
+  ports:
+    - name: grpc
+      port: 50058
+      targetPort: 50058
+
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# API GATEWAY  (REST → gRPC translation layer)
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: rentrelay
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: rentrelay/api-gateway:latest
+          ports:
+            - containerPort: 8080    # REST API
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: HTTP_PORT
+              value: "8080"
+            - name: USER_SERVICE_ADDR
+              value: "user-service:50051"
+            - name: PROPERTY_SERVICE_ADDR
+              value: "property-service:50052"
+            - name: LANDLORD_SERVICE_ADDR
+              value: "landlord-service:50053"
+            - name: TENANT_SERVICE_ADDR
+              value: "tenant-service:50054"
+            - name: AGREEMENT_SERVICE_ADDR
+              value: "agreement-service:50055"
+            - name: MATCHING_SERVICE_ADDR
+              value: "matching-service:50056"
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 1,    memory: 512Mi }
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: rentrelay
+spec:
+  type: LoadBalancer
+  selector:
+    app: api-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080

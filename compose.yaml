@@ -1,0 +1,36 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: rentrelay-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rentrelay
+      MONGO_INITDB_ROOT_PASSWORD: rentrelay
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.user-service
+    container_name: rentrelay-user-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin
+      MONGO_DATABASE: rentrelay
+      GRPC_PORT: 50051
+    ports:
+      - "50051:50051"
+
+volumes:
+  mongodb-data:
