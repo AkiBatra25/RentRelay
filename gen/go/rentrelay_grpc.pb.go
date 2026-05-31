@@ -548,7 +548,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LandlordServiceClient interface {
 	SetLeaseTerms(ctx context.Context, in *SetLeaseTermsRequest, opts ...grpc.CallOption) (*LeaseTerms, error)
-	GetLeaseTerms(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*LeaseTerms, error)
+	GetLeaseTerms(ctx context.Context, in *GetLeaseTermsRequest, opts ...grpc.CallOption) (*LeaseTerms, error)
 	GetDashboard(ctx context.Context, in *LandlordDashboardRequest, opts ...grpc.CallOption) (*LandlordDashboard, error)
 	RaiseDispute(ctx context.Context, in *DisputeRequest, opts ...grpc.CallOption) (*Dispute, error)
 	ConfirmVacation(ctx context.Context, in *AgreementActionRequest, opts ...grpc.CallOption) (*Agreement, error)
@@ -572,7 +572,7 @@ func (c *landlordServiceClient) SetLeaseTerms(ctx context.Context, in *SetLeaseT
 	return out, nil
 }
 
-func (c *landlordServiceClient) GetLeaseTerms(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*LeaseTerms, error) {
+func (c *landlordServiceClient) GetLeaseTerms(ctx context.Context, in *GetLeaseTermsRequest, opts ...grpc.CallOption) (*LeaseTerms, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LeaseTerms)
 	err := c.cc.Invoke(ctx, LandlordService_GetLeaseTerms_FullMethodName, in, out, cOpts...)
@@ -617,7 +617,7 @@ func (c *landlordServiceClient) ConfirmVacation(ctx context.Context, in *Agreeme
 // for forward compatibility.
 type LandlordServiceServer interface {
 	SetLeaseTerms(context.Context, *SetLeaseTermsRequest) (*LeaseTerms, error)
-	GetLeaseTerms(context.Context, *GetUserRequest) (*LeaseTerms, error)
+	GetLeaseTerms(context.Context, *GetLeaseTermsRequest) (*LeaseTerms, error)
 	GetDashboard(context.Context, *LandlordDashboardRequest) (*LandlordDashboard, error)
 	RaiseDispute(context.Context, *DisputeRequest) (*Dispute, error)
 	ConfirmVacation(context.Context, *AgreementActionRequest) (*Agreement, error)
@@ -634,7 +634,7 @@ type UnimplementedLandlordServiceServer struct{}
 func (UnimplementedLandlordServiceServer) SetLeaseTerms(context.Context, *SetLeaseTermsRequest) (*LeaseTerms, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetLeaseTerms not implemented")
 }
-func (UnimplementedLandlordServiceServer) GetLeaseTerms(context.Context, *GetUserRequest) (*LeaseTerms, error) {
+func (UnimplementedLandlordServiceServer) GetLeaseTerms(context.Context, *GetLeaseTermsRequest) (*LeaseTerms, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLeaseTerms not implemented")
 }
 func (UnimplementedLandlordServiceServer) GetDashboard(context.Context, *LandlordDashboardRequest) (*LandlordDashboard, error) {
@@ -686,7 +686,7 @@ func _LandlordService_SetLeaseTerms_Handler(srv interface{}, ctx context.Context
 }
 
 func _LandlordService_GetLeaseTerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
+	in := new(GetLeaseTermsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -698,7 +698,7 @@ func _LandlordService_GetLeaseTerms_Handler(srv interface{}, ctx context.Context
 		FullMethod: LandlordService_GetLeaseTerms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LandlordServiceServer).GetLeaseTerms(ctx, req.(*GetUserRequest))
+		return srv.(LandlordServiceServer).GetLeaseTerms(ctx, req.(*GetLeaseTermsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

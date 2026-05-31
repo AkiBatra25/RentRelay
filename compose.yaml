@@ -48,5 +48,20 @@ services:
     ports:
       - "50052:50052"
 
+  landlord-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.landlord-service
+    container_name: rentrelay-landlord-service
+    restart: unless-stopped
+    depends_on:
+      property-service:
+        condition: service_started
+    environment:
+      PROPERTY_SERVICE_ADDR: property-service:50052
+      GRPC_PORT: 50053
+    ports:
+      - "50053:50053"
+
 volumes:
   mongodb-data:
