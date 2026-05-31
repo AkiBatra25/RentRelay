@@ -1278,6 +1278,50 @@ func (x *UpdateAvailabilityRequest) GetIsAvailable() bool {
 	return false
 }
 
+type GetPropertyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PropertyId    string                 `protobuf:"bytes,1,opt,name=property_id,json=propertyId,proto3" json:"property_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPropertyRequest) Reset() {
+	*x = GetPropertyRequest{}
+	mi := &file_rentrelay_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPropertyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPropertyRequest) ProtoMessage() {}
+
+func (x *GetPropertyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_rentrelay_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPropertyRequest.ProtoReflect.Descriptor instead.
+func (*GetPropertyRequest) Descriptor() ([]byte, []int) {
+	return file_rentrelay_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetPropertyRequest) GetPropertyId() string {
+	if x != nil {
+		return x.PropertyId
+	}
+	return ""
+}
+
 type LeaseTerms struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	LandlordId        string                 `protobuf:"bytes,1,opt,name=landlord_id,json=landlordId,proto3" json:"landlord_id,omitempty"`
@@ -1294,7 +1338,7 @@ type LeaseTerms struct {
 
 func (x *LeaseTerms) Reset() {
 	*x = LeaseTerms{}
-	mi := &file_rentrelay_proto_msgTypes[12]
+	mi := &file_rentrelay_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1306,7 +1350,7 @@ func (x *LeaseTerms) String() string {
 func (*LeaseTerms) ProtoMessage() {}
 
 func (x *LeaseTerms) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[12]
+	mi := &file_rentrelay_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1319,7 +1363,7 @@ func (x *LeaseTerms) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LeaseTerms.ProtoReflect.Descriptor instead.
 func (*LeaseTerms) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{12}
+	return file_rentrelay_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *LeaseTerms) GetLandlordId() string {
@@ -1389,7 +1433,7 @@ type SetLeaseTermsRequest struct {
 
 func (x *SetLeaseTermsRequest) Reset() {
 	*x = SetLeaseTermsRequest{}
-	mi := &file_rentrelay_proto_msgTypes[13]
+	mi := &file_rentrelay_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1401,7 +1445,7 @@ func (x *SetLeaseTermsRequest) String() string {
 func (*SetLeaseTermsRequest) ProtoMessage() {}
 
 func (x *SetLeaseTermsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[13]
+	mi := &file_rentrelay_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1414,7 +1458,7 @@ func (x *SetLeaseTermsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetLeaseTermsRequest.ProtoReflect.Descriptor instead.
 func (*SetLeaseTermsRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{13}
+	return file_rentrelay_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SetLeaseTermsRequest) GetLandlordId() string {
@@ -1447,7 +1491,7 @@ type LandlordDashboardRequest struct {
 
 func (x *LandlordDashboardRequest) Reset() {
 	*x = LandlordDashboardRequest{}
-	mi := &file_rentrelay_proto_msgTypes[14]
+	mi := &file_rentrelay_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1459,7 +1503,7 @@ func (x *LandlordDashboardRequest) String() string {
 func (*LandlordDashboardRequest) ProtoMessage() {}
 
 func (x *LandlordDashboardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[14]
+	mi := &file_rentrelay_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1472,7 +1516,7 @@ func (x *LandlordDashboardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LandlordDashboardRequest.ProtoReflect.Descriptor instead.
 func (*LandlordDashboardRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{14}
+	return file_rentrelay_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *LandlordDashboardRequest) GetLandlordId() string {
@@ -1496,7 +1540,7 @@ type LandlordDashboard struct {
 
 func (x *LandlordDashboard) Reset() {
 	*x = LandlordDashboard{}
-	mi := &file_rentrelay_proto_msgTypes[15]
+	mi := &file_rentrelay_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1508,7 +1552,7 @@ func (x *LandlordDashboard) String() string {
 func (*LandlordDashboard) ProtoMessage() {}
 
 func (x *LandlordDashboard) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[15]
+	mi := &file_rentrelay_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1521,7 +1565,7 @@ func (x *LandlordDashboard) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LandlordDashboard.ProtoReflect.Descriptor instead.
 func (*LandlordDashboard) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{15}
+	return file_rentrelay_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *LandlordDashboard) GetLandlordId() string {
@@ -1583,7 +1627,7 @@ type RentalRequest struct {
 
 func (x *RentalRequest) Reset() {
 	*x = RentalRequest{}
-	mi := &file_rentrelay_proto_msgTypes[16]
+	mi := &file_rentrelay_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1595,7 +1639,7 @@ func (x *RentalRequest) String() string {
 func (*RentalRequest) ProtoMessage() {}
 
 func (x *RentalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[16]
+	mi := &file_rentrelay_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1608,7 +1652,7 @@ func (x *RentalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RentalRequest.ProtoReflect.Descriptor instead.
 func (*RentalRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{16}
+	return file_rentrelay_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RentalRequest) GetRequestId() string {
@@ -1689,7 +1733,7 @@ type CreateRentalRequestReq struct {
 
 func (x *CreateRentalRequestReq) Reset() {
 	*x = CreateRentalRequestReq{}
-	mi := &file_rentrelay_proto_msgTypes[17]
+	mi := &file_rentrelay_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1701,7 +1745,7 @@ func (x *CreateRentalRequestReq) String() string {
 func (*CreateRentalRequestReq) ProtoMessage() {}
 
 func (x *CreateRentalRequestReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[17]
+	mi := &file_rentrelay_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1714,7 +1758,7 @@ func (x *CreateRentalRequestReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRentalRequestReq.ProtoReflect.Descriptor instead.
 func (*CreateRentalRequestReq) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{17}
+	return file_rentrelay_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateRentalRequestReq) GetTenantId() string {
@@ -1780,7 +1824,7 @@ type TenantDashboard struct {
 
 func (x *TenantDashboard) Reset() {
 	*x = TenantDashboard{}
-	mi := &file_rentrelay_proto_msgTypes[18]
+	mi := &file_rentrelay_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1792,7 +1836,7 @@ func (x *TenantDashboard) String() string {
 func (*TenantDashboard) ProtoMessage() {}
 
 func (x *TenantDashboard) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[18]
+	mi := &file_rentrelay_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1805,7 +1849,7 @@ func (x *TenantDashboard) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantDashboard.ProtoReflect.Descriptor instead.
 func (*TenantDashboard) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{18}
+	return file_rentrelay_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *TenantDashboard) GetTenantId() string {
@@ -1860,7 +1904,7 @@ type MatchRequest struct {
 
 func (x *MatchRequest) Reset() {
 	*x = MatchRequest{}
-	mi := &file_rentrelay_proto_msgTypes[19]
+	mi := &file_rentrelay_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1872,7 +1916,7 @@ func (x *MatchRequest) String() string {
 func (*MatchRequest) ProtoMessage() {}
 
 func (x *MatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[19]
+	mi := &file_rentrelay_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1885,7 +1929,7 @@ func (x *MatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MatchRequest.ProtoReflect.Descriptor instead.
 func (*MatchRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{19}
+	return file_rentrelay_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *MatchRequest) GetMatchRequestId() string {
@@ -1916,7 +1960,7 @@ type MatchCandidate struct {
 
 func (x *MatchCandidate) Reset() {
 	*x = MatchCandidate{}
-	mi := &file_rentrelay_proto_msgTypes[20]
+	mi := &file_rentrelay_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1928,7 +1972,7 @@ func (x *MatchCandidate) String() string {
 func (*MatchCandidate) ProtoMessage() {}
 
 func (x *MatchCandidate) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[20]
+	mi := &file_rentrelay_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1941,7 +1985,7 @@ func (x *MatchCandidate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MatchCandidate.ProtoReflect.Descriptor instead.
 func (*MatchCandidate) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{20}
+	return file_rentrelay_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *MatchCandidate) GetPropertyId() string {
@@ -1997,7 +2041,7 @@ type MatchResponse struct {
 
 func (x *MatchResponse) Reset() {
 	*x = MatchResponse{}
-	mi := &file_rentrelay_proto_msgTypes[21]
+	mi := &file_rentrelay_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2009,7 +2053,7 @@ func (x *MatchResponse) String() string {
 func (*MatchResponse) ProtoMessage() {}
 
 func (x *MatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[21]
+	mi := &file_rentrelay_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2022,7 +2066,7 @@ func (x *MatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MatchResponse.ProtoReflect.Descriptor instead.
 func (*MatchResponse) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{21}
+	return file_rentrelay_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *MatchResponse) GetMatchRequestId() string {
@@ -2057,7 +2101,7 @@ type MatchStreamRequest struct {
 
 func (x *MatchStreamRequest) Reset() {
 	*x = MatchStreamRequest{}
-	mi := &file_rentrelay_proto_msgTypes[22]
+	mi := &file_rentrelay_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2069,7 +2113,7 @@ func (x *MatchStreamRequest) String() string {
 func (*MatchStreamRequest) ProtoMessage() {}
 
 func (x *MatchStreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[22]
+	mi := &file_rentrelay_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2082,7 +2126,7 @@ func (x *MatchStreamRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MatchStreamRequest.ProtoReflect.Descriptor instead.
 func (*MatchStreamRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{22}
+	return file_rentrelay_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *MatchStreamRequest) GetTenantId() string {
@@ -2110,7 +2154,7 @@ type MatchStreamEvent struct {
 
 func (x *MatchStreamEvent) Reset() {
 	*x = MatchStreamEvent{}
-	mi := &file_rentrelay_proto_msgTypes[23]
+	mi := &file_rentrelay_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2122,7 +2166,7 @@ func (x *MatchStreamEvent) String() string {
 func (*MatchStreamEvent) ProtoMessage() {}
 
 func (x *MatchStreamEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[23]
+	mi := &file_rentrelay_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2135,7 +2179,7 @@ func (x *MatchStreamEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MatchStreamEvent.ProtoReflect.Descriptor instead.
 func (*MatchStreamEvent) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{23}
+	return file_rentrelay_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *MatchStreamEvent) GetPropertyId() string {
@@ -2170,7 +2214,7 @@ type AcceptMatchRequest struct {
 
 func (x *AcceptMatchRequest) Reset() {
 	*x = AcceptMatchRequest{}
-	mi := &file_rentrelay_proto_msgTypes[24]
+	mi := &file_rentrelay_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2182,7 +2226,7 @@ func (x *AcceptMatchRequest) String() string {
 func (*AcceptMatchRequest) ProtoMessage() {}
 
 func (x *AcceptMatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[24]
+	mi := &file_rentrelay_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2195,7 +2239,7 @@ func (x *AcceptMatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptMatchRequest.ProtoReflect.Descriptor instead.
 func (*AcceptMatchRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{24}
+	return file_rentrelay_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *AcceptMatchRequest) GetTenantId() string {
@@ -2246,7 +2290,7 @@ type Agreement struct {
 
 func (x *Agreement) Reset() {
 	*x = Agreement{}
-	mi := &file_rentrelay_proto_msgTypes[25]
+	mi := &file_rentrelay_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2258,7 +2302,7 @@ func (x *Agreement) String() string {
 func (*Agreement) ProtoMessage() {}
 
 func (x *Agreement) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[25]
+	mi := &file_rentrelay_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2271,7 +2315,7 @@ func (x *Agreement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Agreement.ProtoReflect.Descriptor instead.
 func (*Agreement) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{25}
+	return file_rentrelay_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *Agreement) GetAgreementId() string {
@@ -2416,7 +2460,7 @@ type CreateAgreementRequest struct {
 
 func (x *CreateAgreementRequest) Reset() {
 	*x = CreateAgreementRequest{}
-	mi := &file_rentrelay_proto_msgTypes[26]
+	mi := &file_rentrelay_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2428,7 +2472,7 @@ func (x *CreateAgreementRequest) String() string {
 func (*CreateAgreementRequest) ProtoMessage() {}
 
 func (x *CreateAgreementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[26]
+	mi := &file_rentrelay_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2441,7 +2485,7 @@ func (x *CreateAgreementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAgreementRequest.ProtoReflect.Descriptor instead.
 func (*CreateAgreementRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{26}
+	return file_rentrelay_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateAgreementRequest) GetTenantId() string {
@@ -2511,7 +2555,7 @@ type AgreementActionRequest struct {
 
 func (x *AgreementActionRequest) Reset() {
 	*x = AgreementActionRequest{}
-	mi := &file_rentrelay_proto_msgTypes[27]
+	mi := &file_rentrelay_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2523,7 +2567,7 @@ func (x *AgreementActionRequest) String() string {
 func (*AgreementActionRequest) ProtoMessage() {}
 
 func (x *AgreementActionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[27]
+	mi := &file_rentrelay_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2536,7 +2580,7 @@ func (x *AgreementActionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgreementActionRequest.ProtoReflect.Descriptor instead.
 func (*AgreementActionRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{27}
+	return file_rentrelay_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *AgreementActionRequest) GetAgreementId() string {
@@ -2571,7 +2615,7 @@ type SignAgreementRequest struct {
 
 func (x *SignAgreementRequest) Reset() {
 	*x = SignAgreementRequest{}
-	mi := &file_rentrelay_proto_msgTypes[28]
+	mi := &file_rentrelay_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2583,7 +2627,7 @@ func (x *SignAgreementRequest) String() string {
 func (*SignAgreementRequest) ProtoMessage() {}
 
 func (x *SignAgreementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[28]
+	mi := &file_rentrelay_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2596,7 +2640,7 @@ func (x *SignAgreementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignAgreementRequest.ProtoReflect.Descriptor instead.
 func (*SignAgreementRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{28}
+	return file_rentrelay_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *SignAgreementRequest) GetAgreementId() string {
@@ -2633,7 +2677,7 @@ type RecordPaymentReq struct {
 
 func (x *RecordPaymentReq) Reset() {
 	*x = RecordPaymentReq{}
-	mi := &file_rentrelay_proto_msgTypes[29]
+	mi := &file_rentrelay_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2645,7 +2689,7 @@ func (x *RecordPaymentReq) String() string {
 func (*RecordPaymentReq) ProtoMessage() {}
 
 func (x *RecordPaymentReq) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[29]
+	mi := &file_rentrelay_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2658,7 +2702,7 @@ func (x *RecordPaymentReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordPaymentReq.ProtoReflect.Descriptor instead.
 func (*RecordPaymentReq) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{29}
+	return file_rentrelay_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *RecordPaymentReq) GetAgreementId() string {
@@ -2708,7 +2752,7 @@ type ReleaseEscrowRequest struct {
 
 func (x *ReleaseEscrowRequest) Reset() {
 	*x = ReleaseEscrowRequest{}
-	mi := &file_rentrelay_proto_msgTypes[30]
+	mi := &file_rentrelay_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2720,7 +2764,7 @@ func (x *ReleaseEscrowRequest) String() string {
 func (*ReleaseEscrowRequest) ProtoMessage() {}
 
 func (x *ReleaseEscrowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[30]
+	mi := &file_rentrelay_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2733,7 +2777,7 @@ func (x *ReleaseEscrowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseEscrowRequest.ProtoReflect.Descriptor instead.
 func (*ReleaseEscrowRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{30}
+	return file_rentrelay_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ReleaseEscrowRequest) GetAgreementId() string {
@@ -2778,7 +2822,7 @@ type AgreementEvent struct {
 
 func (x *AgreementEvent) Reset() {
 	*x = AgreementEvent{}
-	mi := &file_rentrelay_proto_msgTypes[31]
+	mi := &file_rentrelay_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2790,7 +2834,7 @@ func (x *AgreementEvent) String() string {
 func (*AgreementEvent) ProtoMessage() {}
 
 func (x *AgreementEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[31]
+	mi := &file_rentrelay_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2803,7 +2847,7 @@ func (x *AgreementEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AgreementEvent.ProtoReflect.Descriptor instead.
 func (*AgreementEvent) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{31}
+	return file_rentrelay_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *AgreementEvent) GetAgreementId() string {
@@ -2865,7 +2909,7 @@ type Document struct {
 
 func (x *Document) Reset() {
 	*x = Document{}
-	mi := &file_rentrelay_proto_msgTypes[32]
+	mi := &file_rentrelay_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2877,7 +2921,7 @@ func (x *Document) String() string {
 func (*Document) ProtoMessage() {}
 
 func (x *Document) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[32]
+	mi := &file_rentrelay_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2890,7 +2934,7 @@ func (x *Document) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Document.ProtoReflect.Descriptor instead.
 func (*Document) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{32}
+	return file_rentrelay_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *Document) GetDocumentId() string {
@@ -2969,7 +3013,7 @@ type UploadDocumentRequest struct {
 
 func (x *UploadDocumentRequest) Reset() {
 	*x = UploadDocumentRequest{}
-	mi := &file_rentrelay_proto_msgTypes[33]
+	mi := &file_rentrelay_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2981,7 +3025,7 @@ func (x *UploadDocumentRequest) String() string {
 func (*UploadDocumentRequest) ProtoMessage() {}
 
 func (x *UploadDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[33]
+	mi := &file_rentrelay_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2994,7 +3038,7 @@ func (x *UploadDocumentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadDocumentRequest.ProtoReflect.Descriptor instead.
 func (*UploadDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{33}
+	return file_rentrelay_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *UploadDocumentRequest) GetAgreementId() string {
@@ -3042,7 +3086,7 @@ type VerifyDocumentRequest struct {
 
 func (x *VerifyDocumentRequest) Reset() {
 	*x = VerifyDocumentRequest{}
-	mi := &file_rentrelay_proto_msgTypes[34]
+	mi := &file_rentrelay_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3054,7 +3098,7 @@ func (x *VerifyDocumentRequest) String() string {
 func (*VerifyDocumentRequest) ProtoMessage() {}
 
 func (x *VerifyDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[34]
+	mi := &file_rentrelay_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3067,7 +3111,7 @@ func (x *VerifyDocumentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerifyDocumentRequest.ProtoReflect.Descriptor instead.
 func (*VerifyDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{34}
+	return file_rentrelay_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *VerifyDocumentRequest) GetDocumentId() string {
@@ -3095,7 +3139,7 @@ type VerifyDocumentResponse struct {
 
 func (x *VerifyDocumentResponse) Reset() {
 	*x = VerifyDocumentResponse{}
-	mi := &file_rentrelay_proto_msgTypes[35]
+	mi := &file_rentrelay_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3107,7 +3151,7 @@ func (x *VerifyDocumentResponse) String() string {
 func (*VerifyDocumentResponse) ProtoMessage() {}
 
 func (x *VerifyDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[35]
+	mi := &file_rentrelay_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3120,7 +3164,7 @@ func (x *VerifyDocumentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerifyDocumentResponse.ProtoReflect.Descriptor instead.
 func (*VerifyDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{35}
+	return file_rentrelay_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *VerifyDocumentResponse) GetIsValid() bool {
@@ -3153,7 +3197,7 @@ type LockDocumentsRequest struct {
 
 func (x *LockDocumentsRequest) Reset() {
 	*x = LockDocumentsRequest{}
-	mi := &file_rentrelay_proto_msgTypes[36]
+	mi := &file_rentrelay_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3165,7 +3209,7 @@ func (x *LockDocumentsRequest) String() string {
 func (*LockDocumentsRequest) ProtoMessage() {}
 
 func (x *LockDocumentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[36]
+	mi := &file_rentrelay_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3178,7 +3222,7 @@ func (x *LockDocumentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LockDocumentsRequest.ProtoReflect.Descriptor instead.
 func (*LockDocumentsRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{36}
+	return file_rentrelay_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *LockDocumentsRequest) GetAgreementId() string {
@@ -3197,7 +3241,7 @@ type DocumentList struct {
 
 func (x *DocumentList) Reset() {
 	*x = DocumentList{}
-	mi := &file_rentrelay_proto_msgTypes[37]
+	mi := &file_rentrelay_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3209,7 +3253,7 @@ func (x *DocumentList) String() string {
 func (*DocumentList) ProtoMessage() {}
 
 func (x *DocumentList) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[37]
+	mi := &file_rentrelay_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3222,7 +3266,7 @@ func (x *DocumentList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DocumentList.ProtoReflect.Descriptor instead.
 func (*DocumentList) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{37}
+	return file_rentrelay_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *DocumentList) GetDocuments() []*Document {
@@ -3249,7 +3293,7 @@ type Notification struct {
 
 func (x *Notification) Reset() {
 	*x = Notification{}
-	mi := &file_rentrelay_proto_msgTypes[38]
+	mi := &file_rentrelay_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3261,7 +3305,7 @@ func (x *Notification) String() string {
 func (*Notification) ProtoMessage() {}
 
 func (x *Notification) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[38]
+	mi := &file_rentrelay_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3274,7 +3318,7 @@ func (x *Notification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Notification.ProtoReflect.Descriptor instead.
 func (*Notification) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{38}
+	return file_rentrelay_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *Notification) GetNotificationId() string {
@@ -3353,7 +3397,7 @@ type SendNotificationRequest struct {
 
 func (x *SendNotificationRequest) Reset() {
 	*x = SendNotificationRequest{}
-	mi := &file_rentrelay_proto_msgTypes[39]
+	mi := &file_rentrelay_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3365,7 +3409,7 @@ func (x *SendNotificationRequest) String() string {
 func (*SendNotificationRequest) ProtoMessage() {}
 
 func (x *SendNotificationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[39]
+	mi := &file_rentrelay_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3378,7 +3422,7 @@ func (x *SendNotificationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendNotificationRequest.ProtoReflect.Descriptor instead.
 func (*SendNotificationRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{39}
+	return file_rentrelay_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *SendNotificationRequest) GetUserId() string {
@@ -3429,7 +3473,7 @@ type BroadcastRequest struct {
 
 func (x *BroadcastRequest) Reset() {
 	*x = BroadcastRequest{}
-	mi := &file_rentrelay_proto_msgTypes[40]
+	mi := &file_rentrelay_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3441,7 +3485,7 @@ func (x *BroadcastRequest) String() string {
 func (*BroadcastRequest) ProtoMessage() {}
 
 func (x *BroadcastRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[40]
+	mi := &file_rentrelay_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3454,7 +3498,7 @@ func (x *BroadcastRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BroadcastRequest.ProtoReflect.Descriptor instead.
 func (*BroadcastRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{40}
+	return file_rentrelay_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *BroadcastRequest) GetUserIds() []string {
@@ -3502,7 +3546,7 @@ type NotificationList struct {
 
 func (x *NotificationList) Reset() {
 	*x = NotificationList{}
-	mi := &file_rentrelay_proto_msgTypes[41]
+	mi := &file_rentrelay_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3514,7 +3558,7 @@ func (x *NotificationList) String() string {
 func (*NotificationList) ProtoMessage() {}
 
 func (x *NotificationList) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[41]
+	mi := &file_rentrelay_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3527,7 +3571,7 @@ func (x *NotificationList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotificationList.ProtoReflect.Descriptor instead.
 func (*NotificationList) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{41}
+	return file_rentrelay_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *NotificationList) GetNotifications() []*Notification {
@@ -3557,7 +3601,7 @@ type PaymentRequest struct {
 
 func (x *PaymentRequest) Reset() {
 	*x = PaymentRequest{}
-	mi := &file_rentrelay_proto_msgTypes[42]
+	mi := &file_rentrelay_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3569,7 +3613,7 @@ func (x *PaymentRequest) String() string {
 func (*PaymentRequest) ProtoMessage() {}
 
 func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[42]
+	mi := &file_rentrelay_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3582,7 +3626,7 @@ func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentRequest.ProtoReflect.Descriptor instead.
 func (*PaymentRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{42}
+	return file_rentrelay_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *PaymentRequest) GetAgreementId() string {
@@ -3636,7 +3680,7 @@ type PaymentReceipt struct {
 
 func (x *PaymentReceipt) Reset() {
 	*x = PaymentReceipt{}
-	mi := &file_rentrelay_proto_msgTypes[43]
+	mi := &file_rentrelay_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3648,7 +3692,7 @@ func (x *PaymentReceipt) String() string {
 func (*PaymentReceipt) ProtoMessage() {}
 
 func (x *PaymentReceipt) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[43]
+	mi := &file_rentrelay_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3661,7 +3705,7 @@ func (x *PaymentReceipt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentReceipt.ProtoReflect.Descriptor instead.
 func (*PaymentReceipt) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{43}
+	return file_rentrelay_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *PaymentReceipt) GetReceiptId() string {
@@ -3733,7 +3777,7 @@ type DisputeRequest struct {
 
 func (x *DisputeRequest) Reset() {
 	*x = DisputeRequest{}
-	mi := &file_rentrelay_proto_msgTypes[44]
+	mi := &file_rentrelay_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3745,7 +3789,7 @@ func (x *DisputeRequest) String() string {
 func (*DisputeRequest) ProtoMessage() {}
 
 func (x *DisputeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[44]
+	mi := &file_rentrelay_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3758,7 +3802,7 @@ func (x *DisputeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisputeRequest.ProtoReflect.Descriptor instead.
 func (*DisputeRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{44}
+	return file_rentrelay_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *DisputeRequest) GetAgreementId() string {
@@ -3815,7 +3859,7 @@ type Dispute struct {
 
 func (x *Dispute) Reset() {
 	*x = Dispute{}
-	mi := &file_rentrelay_proto_msgTypes[45]
+	mi := &file_rentrelay_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3827,7 +3871,7 @@ func (x *Dispute) String() string {
 func (*Dispute) ProtoMessage() {}
 
 func (x *Dispute) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[45]
+	mi := &file_rentrelay_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3840,7 +3884,7 @@ func (x *Dispute) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Dispute.ProtoReflect.Descriptor instead.
 func (*Dispute) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{45}
+	return file_rentrelay_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *Dispute) GetDisputeId() string {
@@ -3934,7 +3978,7 @@ type PartitionInfo struct {
 
 func (x *PartitionInfo) Reset() {
 	*x = PartitionInfo{}
-	mi := &file_rentrelay_proto_msgTypes[46]
+	mi := &file_rentrelay_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3946,7 +3990,7 @@ func (x *PartitionInfo) String() string {
 func (*PartitionInfo) ProtoMessage() {}
 
 func (x *PartitionInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[46]
+	mi := &file_rentrelay_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3959,7 +4003,7 @@ func (x *PartitionInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PartitionInfo.ProtoReflect.Descriptor instead.
 func (*PartitionInfo) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{46}
+	return file_rentrelay_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *PartitionInfo) GetWorkerId() string {
@@ -4013,7 +4057,7 @@ type GetWorkerRequest struct {
 
 func (x *GetWorkerRequest) Reset() {
 	*x = GetWorkerRequest{}
-	mi := &file_rentrelay_proto_msgTypes[47]
+	mi := &file_rentrelay_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4025,7 +4069,7 @@ func (x *GetWorkerRequest) String() string {
 func (*GetWorkerRequest) ProtoMessage() {}
 
 func (x *GetWorkerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[47]
+	mi := &file_rentrelay_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4038,7 +4082,7 @@ func (x *GetWorkerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkerRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkerRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{47}
+	return file_rentrelay_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetWorkerRequest) GetKey() string {
@@ -4058,7 +4102,7 @@ type GetWorkerResponse struct {
 
 func (x *GetWorkerResponse) Reset() {
 	*x = GetWorkerResponse{}
-	mi := &file_rentrelay_proto_msgTypes[48]
+	mi := &file_rentrelay_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4070,7 +4114,7 @@ func (x *GetWorkerResponse) String() string {
 func (*GetWorkerResponse) ProtoMessage() {}
 
 func (x *GetWorkerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[48]
+	mi := &file_rentrelay_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4083,7 +4127,7 @@ func (x *GetWorkerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkerResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkerResponse) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{48}
+	return file_rentrelay_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *GetWorkerResponse) GetPrimary() *PartitionInfo {
@@ -4111,7 +4155,7 @@ type HeartbeatRequest struct {
 
 func (x *HeartbeatRequest) Reset() {
 	*x = HeartbeatRequest{}
-	mi := &file_rentrelay_proto_msgTypes[49]
+	mi := &file_rentrelay_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4123,7 +4167,7 @@ func (x *HeartbeatRequest) String() string {
 func (*HeartbeatRequest) ProtoMessage() {}
 
 func (x *HeartbeatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[49]
+	mi := &file_rentrelay_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4136,7 +4180,7 @@ func (x *HeartbeatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HeartbeatRequest.ProtoReflect.Descriptor instead.
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{49}
+	return file_rentrelay_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *HeartbeatRequest) GetWorkerId() string {
@@ -4172,7 +4216,7 @@ type RebalanceEvent struct {
 
 func (x *RebalanceEvent) Reset() {
 	*x = RebalanceEvent{}
-	mi := &file_rentrelay_proto_msgTypes[50]
+	mi := &file_rentrelay_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4184,7 +4228,7 @@ func (x *RebalanceEvent) String() string {
 func (*RebalanceEvent) ProtoMessage() {}
 
 func (x *RebalanceEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[50]
+	mi := &file_rentrelay_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4197,7 +4241,7 @@ func (x *RebalanceEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RebalanceEvent.ProtoReflect.Descriptor instead.
 func (*RebalanceEvent) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{50}
+	return file_rentrelay_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *RebalanceEvent) GetFromWorker() string {
@@ -4238,7 +4282,7 @@ type PartitionTable struct {
 
 func (x *PartitionTable) Reset() {
 	*x = PartitionTable{}
-	mi := &file_rentrelay_proto_msgTypes[51]
+	mi := &file_rentrelay_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4250,7 +4294,7 @@ func (x *PartitionTable) String() string {
 func (*PartitionTable) ProtoMessage() {}
 
 func (x *PartitionTable) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[51]
+	mi := &file_rentrelay_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4263,7 +4307,7 @@ func (x *PartitionTable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PartitionTable.ProtoReflect.Descriptor instead.
 func (*PartitionTable) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{51}
+	return file_rentrelay_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *PartitionTable) GetPartitions() []*PartitionInfo {
@@ -4292,7 +4336,7 @@ type KVPutRequest struct {
 
 func (x *KVPutRequest) Reset() {
 	*x = KVPutRequest{}
-	mi := &file_rentrelay_proto_msgTypes[52]
+	mi := &file_rentrelay_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4304,7 +4348,7 @@ func (x *KVPutRequest) String() string {
 func (*KVPutRequest) ProtoMessage() {}
 
 func (x *KVPutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[52]
+	mi := &file_rentrelay_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4317,7 +4361,7 @@ func (x *KVPutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KVPutRequest.ProtoReflect.Descriptor instead.
 func (*KVPutRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{52}
+	return file_rentrelay_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *KVPutRequest) GetKey() string {
@@ -4359,7 +4403,7 @@ type KVPutResponse struct {
 
 func (x *KVPutResponse) Reset() {
 	*x = KVPutResponse{}
-	mi := &file_rentrelay_proto_msgTypes[53]
+	mi := &file_rentrelay_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4371,7 +4415,7 @@ func (x *KVPutResponse) String() string {
 func (*KVPutResponse) ProtoMessage() {}
 
 func (x *KVPutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[53]
+	mi := &file_rentrelay_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4384,7 +4428,7 @@ func (x *KVPutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KVPutResponse.ProtoReflect.Descriptor instead.
 func (*KVPutResponse) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{53}
+	return file_rentrelay_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *KVPutResponse) GetSuccess() bool {
@@ -4417,7 +4461,7 @@ type KVGetRequest struct {
 
 func (x *KVGetRequest) Reset() {
 	*x = KVGetRequest{}
-	mi := &file_rentrelay_proto_msgTypes[54]
+	mi := &file_rentrelay_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4429,7 +4473,7 @@ func (x *KVGetRequest) String() string {
 func (*KVGetRequest) ProtoMessage() {}
 
 func (x *KVGetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[54]
+	mi := &file_rentrelay_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4442,7 +4486,7 @@ func (x *KVGetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KVGetRequest.ProtoReflect.Descriptor instead.
 func (*KVGetRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{54}
+	return file_rentrelay_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *KVGetRequest) GetKey() string {
@@ -4464,7 +4508,7 @@ type KVGetResponse struct {
 
 func (x *KVGetResponse) Reset() {
 	*x = KVGetResponse{}
-	mi := &file_rentrelay_proto_msgTypes[55]
+	mi := &file_rentrelay_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4476,7 +4520,7 @@ func (x *KVGetResponse) String() string {
 func (*KVGetResponse) ProtoMessage() {}
 
 func (x *KVGetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[55]
+	mi := &file_rentrelay_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4489,7 +4533,7 @@ func (x *KVGetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KVGetResponse.ProtoReflect.Descriptor instead.
 func (*KVGetResponse) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{55}
+	return file_rentrelay_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *KVGetResponse) GetKey() string {
@@ -4530,7 +4574,7 @@ type KeyRangeRequest struct {
 
 func (x *KeyRangeRequest) Reset() {
 	*x = KeyRangeRequest{}
-	mi := &file_rentrelay_proto_msgTypes[56]
+	mi := &file_rentrelay_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4542,7 +4586,7 @@ func (x *KeyRangeRequest) String() string {
 func (*KeyRangeRequest) ProtoMessage() {}
 
 func (x *KeyRangeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[56]
+	mi := &file_rentrelay_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4555,7 +4599,7 @@ func (x *KeyRangeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KeyRangeRequest.ProtoReflect.Descriptor instead.
 func (*KeyRangeRequest) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{56}
+	return file_rentrelay_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *KeyRangeRequest) GetShardStart() int32 {
@@ -4581,7 +4625,7 @@ type KeyList struct {
 
 func (x *KeyList) Reset() {
 	*x = KeyList{}
-	mi := &file_rentrelay_proto_msgTypes[57]
+	mi := &file_rentrelay_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4593,7 +4637,7 @@ func (x *KeyList) String() string {
 func (*KeyList) ProtoMessage() {}
 
 func (x *KeyList) ProtoReflect() protoreflect.Message {
-	mi := &file_rentrelay_proto_msgTypes[57]
+	mi := &file_rentrelay_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4606,7 +4650,7 @@ func (x *KeyList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KeyList.ProtoReflect.Descriptor instead.
 func (*KeyList) Descriptor() ([]byte, []int) {
-	return file_rentrelay_proto_rawDescGZIP(), []int{57}
+	return file_rentrelay_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *KeyList) GetKeys() []string {
@@ -4714,7 +4758,10 @@ const file_rentrelay_proto_rawDesc = "" +
 	"\x19UpdateAvailabilityRequest\x12\x1f\n" +
 	"\vproperty_id\x18\x01 \x01(\tR\n" +
 	"propertyId\x12!\n" +
-	"\fis_available\x18\x02 \x01(\bR\visAvailable\"\xcf\x02\n" +
+	"\fis_available\x18\x02 \x01(\bR\visAvailable\"5\n" +
+	"\x12GetPropertyRequest\x12\x1f\n" +
+	"\vproperty_id\x18\x01 \x01(\tR\n" +
+	"propertyId\"\xcf\x02\n" +
 	"\n" +
 	"LeaseTerms\x12\x1f\n" +
 	"\vlandlord_id\x18\x01 \x01(\tR\n" +
@@ -5099,10 +5146,10 @@ const file_rentrelay_proto_rawDesc = "" +
 	"\x05Login\x12\x17.rentrelay.LoginRequest\x1a\x18.rentrelay.LoginResponse\x125\n" +
 	"\aGetUser\x12\x19.rentrelay.GetUserRequest\x1a\x0f.rentrelay.User\x129\n" +
 	"\tUpdateKYC\x12\x1b.rentrelay.UpdateKYCRequest\x1a\x0f.rentrelay.User\x12B\n" +
-	"\fRefreshToken\x12\x18.rentrelay.LoginResponse\x1a\x18.rentrelay.LoginResponse2\x9a\x03\n" +
+	"\fRefreshToken\x12\x18.rentrelay.LoginResponse\x1a\x18.rentrelay.LoginResponse2\xa1\x03\n" +
 	"\x0fPropertyService\x12K\n" +
-	"\x10RegisterProperty\x12\".rentrelay.RegisterPropertyRequest\x1a\x13.rentrelay.Property\x12:\n" +
-	"\vGetProperty\x12\x16.google.protobuf.Empty\x1a\x13.rentrelay.Property\x12[\n" +
+	"\x10RegisterProperty\x12\".rentrelay.RegisterPropertyRequest\x1a\x13.rentrelay.Property\x12A\n" +
+	"\vGetProperty\x12\x1d.rentrelay.GetPropertyRequest\x1a\x13.rentrelay.Property\x12[\n" +
 	"\x10SearchProperties\x12\".rentrelay.SearchPropertiesRequest\x1a#.rentrelay.SearchPropertiesResponse\x12O\n" +
 	"\x12UpdateAvailability\x12$.rentrelay.UpdateAvailabilityRequest\x1a\x13.rentrelay.Property\x12P\n" +
 	"\x0eListByLandlord\x12\x19.rentrelay.GetUserRequest\x1a#.rentrelay.SearchPropertiesResponse2\xfb\x02\n" +
@@ -5175,7 +5222,7 @@ func file_rentrelay_proto_rawDescGZIP() []byte {
 }
 
 var file_rentrelay_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_rentrelay_proto_msgTypes = make([]protoimpl.MessageInfo, 60)
+var file_rentrelay_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
 var file_rentrelay_proto_goTypes = []any{
 	(UserRole)(0),                     // 0: rentrelay.UserRole
 	(FurnishingType)(0),               // 1: rentrelay.FurnishingType
@@ -5194,168 +5241,169 @@ var file_rentrelay_proto_goTypes = []any{
 	(*SearchPropertiesRequest)(nil),   // 14: rentrelay.SearchPropertiesRequest
 	(*SearchPropertiesResponse)(nil),  // 15: rentrelay.SearchPropertiesResponse
 	(*UpdateAvailabilityRequest)(nil), // 16: rentrelay.UpdateAvailabilityRequest
-	(*LeaseTerms)(nil),                // 17: rentrelay.LeaseTerms
-	(*SetLeaseTermsRequest)(nil),      // 18: rentrelay.SetLeaseTermsRequest
-	(*LandlordDashboardRequest)(nil),  // 19: rentrelay.LandlordDashboardRequest
-	(*LandlordDashboard)(nil),         // 20: rentrelay.LandlordDashboard
-	(*RentalRequest)(nil),             // 21: rentrelay.RentalRequest
-	(*CreateRentalRequestReq)(nil),    // 22: rentrelay.CreateRentalRequestReq
-	(*TenantDashboard)(nil),           // 23: rentrelay.TenantDashboard
-	(*MatchRequest)(nil),              // 24: rentrelay.MatchRequest
-	(*MatchCandidate)(nil),            // 25: rentrelay.MatchCandidate
-	(*MatchResponse)(nil),             // 26: rentrelay.MatchResponse
-	(*MatchStreamRequest)(nil),        // 27: rentrelay.MatchStreamRequest
-	(*MatchStreamEvent)(nil),          // 28: rentrelay.MatchStreamEvent
-	(*AcceptMatchRequest)(nil),        // 29: rentrelay.AcceptMatchRequest
-	(*Agreement)(nil),                 // 30: rentrelay.Agreement
-	(*CreateAgreementRequest)(nil),    // 31: rentrelay.CreateAgreementRequest
-	(*AgreementActionRequest)(nil),    // 32: rentrelay.AgreementActionRequest
-	(*SignAgreementRequest)(nil),      // 33: rentrelay.SignAgreementRequest
-	(*RecordPaymentReq)(nil),          // 34: rentrelay.RecordPaymentReq
-	(*ReleaseEscrowRequest)(nil),      // 35: rentrelay.ReleaseEscrowRequest
-	(*AgreementEvent)(nil),            // 36: rentrelay.AgreementEvent
-	(*Document)(nil),                  // 37: rentrelay.Document
-	(*UploadDocumentRequest)(nil),     // 38: rentrelay.UploadDocumentRequest
-	(*VerifyDocumentRequest)(nil),     // 39: rentrelay.VerifyDocumentRequest
-	(*VerifyDocumentResponse)(nil),    // 40: rentrelay.VerifyDocumentResponse
-	(*LockDocumentsRequest)(nil),      // 41: rentrelay.LockDocumentsRequest
-	(*DocumentList)(nil),              // 42: rentrelay.DocumentList
-	(*Notification)(nil),              // 43: rentrelay.Notification
-	(*SendNotificationRequest)(nil),   // 44: rentrelay.SendNotificationRequest
-	(*BroadcastRequest)(nil),          // 45: rentrelay.BroadcastRequest
-	(*NotificationList)(nil),          // 46: rentrelay.NotificationList
-	(*PaymentRequest)(nil),            // 47: rentrelay.PaymentRequest
-	(*PaymentReceipt)(nil),            // 48: rentrelay.PaymentReceipt
-	(*DisputeRequest)(nil),            // 49: rentrelay.DisputeRequest
-	(*Dispute)(nil),                   // 50: rentrelay.Dispute
-	(*PartitionInfo)(nil),             // 51: rentrelay.PartitionInfo
-	(*GetWorkerRequest)(nil),          // 52: rentrelay.GetWorkerRequest
-	(*GetWorkerResponse)(nil),         // 53: rentrelay.GetWorkerResponse
-	(*HeartbeatRequest)(nil),          // 54: rentrelay.HeartbeatRequest
-	(*RebalanceEvent)(nil),            // 55: rentrelay.RebalanceEvent
-	(*PartitionTable)(nil),            // 56: rentrelay.PartitionTable
-	(*KVPutRequest)(nil),              // 57: rentrelay.KVPutRequest
-	(*KVPutResponse)(nil),             // 58: rentrelay.KVPutResponse
-	(*KVGetRequest)(nil),              // 59: rentrelay.KVGetRequest
-	(*KVGetResponse)(nil),             // 60: rentrelay.KVGetResponse
-	(*KeyRangeRequest)(nil),           // 61: rentrelay.KeyRangeRequest
-	(*KeyList)(nil),                   // 62: rentrelay.KeyList
-	nil,                               // 63: rentrelay.SendNotificationRequest.TemplateVarsEntry
-	nil,                               // 64: rentrelay.BroadcastRequest.TemplateVarsEntry
-	(*timestamppb.Timestamp)(nil),     // 65: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),             // 66: google.protobuf.Empty
+	(*GetPropertyRequest)(nil),        // 17: rentrelay.GetPropertyRequest
+	(*LeaseTerms)(nil),                // 18: rentrelay.LeaseTerms
+	(*SetLeaseTermsRequest)(nil),      // 19: rentrelay.SetLeaseTermsRequest
+	(*LandlordDashboardRequest)(nil),  // 20: rentrelay.LandlordDashboardRequest
+	(*LandlordDashboard)(nil),         // 21: rentrelay.LandlordDashboard
+	(*RentalRequest)(nil),             // 22: rentrelay.RentalRequest
+	(*CreateRentalRequestReq)(nil),    // 23: rentrelay.CreateRentalRequestReq
+	(*TenantDashboard)(nil),           // 24: rentrelay.TenantDashboard
+	(*MatchRequest)(nil),              // 25: rentrelay.MatchRequest
+	(*MatchCandidate)(nil),            // 26: rentrelay.MatchCandidate
+	(*MatchResponse)(nil),             // 27: rentrelay.MatchResponse
+	(*MatchStreamRequest)(nil),        // 28: rentrelay.MatchStreamRequest
+	(*MatchStreamEvent)(nil),          // 29: rentrelay.MatchStreamEvent
+	(*AcceptMatchRequest)(nil),        // 30: rentrelay.AcceptMatchRequest
+	(*Agreement)(nil),                 // 31: rentrelay.Agreement
+	(*CreateAgreementRequest)(nil),    // 32: rentrelay.CreateAgreementRequest
+	(*AgreementActionRequest)(nil),    // 33: rentrelay.AgreementActionRequest
+	(*SignAgreementRequest)(nil),      // 34: rentrelay.SignAgreementRequest
+	(*RecordPaymentReq)(nil),          // 35: rentrelay.RecordPaymentReq
+	(*ReleaseEscrowRequest)(nil),      // 36: rentrelay.ReleaseEscrowRequest
+	(*AgreementEvent)(nil),            // 37: rentrelay.AgreementEvent
+	(*Document)(nil),                  // 38: rentrelay.Document
+	(*UploadDocumentRequest)(nil),     // 39: rentrelay.UploadDocumentRequest
+	(*VerifyDocumentRequest)(nil),     // 40: rentrelay.VerifyDocumentRequest
+	(*VerifyDocumentResponse)(nil),    // 41: rentrelay.VerifyDocumentResponse
+	(*LockDocumentsRequest)(nil),      // 42: rentrelay.LockDocumentsRequest
+	(*DocumentList)(nil),              // 43: rentrelay.DocumentList
+	(*Notification)(nil),              // 44: rentrelay.Notification
+	(*SendNotificationRequest)(nil),   // 45: rentrelay.SendNotificationRequest
+	(*BroadcastRequest)(nil),          // 46: rentrelay.BroadcastRequest
+	(*NotificationList)(nil),          // 47: rentrelay.NotificationList
+	(*PaymentRequest)(nil),            // 48: rentrelay.PaymentRequest
+	(*PaymentReceipt)(nil),            // 49: rentrelay.PaymentReceipt
+	(*DisputeRequest)(nil),            // 50: rentrelay.DisputeRequest
+	(*Dispute)(nil),                   // 51: rentrelay.Dispute
+	(*PartitionInfo)(nil),             // 52: rentrelay.PartitionInfo
+	(*GetWorkerRequest)(nil),          // 53: rentrelay.GetWorkerRequest
+	(*GetWorkerResponse)(nil),         // 54: rentrelay.GetWorkerResponse
+	(*HeartbeatRequest)(nil),          // 55: rentrelay.HeartbeatRequest
+	(*RebalanceEvent)(nil),            // 56: rentrelay.RebalanceEvent
+	(*PartitionTable)(nil),            // 57: rentrelay.PartitionTable
+	(*KVPutRequest)(nil),              // 58: rentrelay.KVPutRequest
+	(*KVPutResponse)(nil),             // 59: rentrelay.KVPutResponse
+	(*KVGetRequest)(nil),              // 60: rentrelay.KVGetRequest
+	(*KVGetResponse)(nil),             // 61: rentrelay.KVGetResponse
+	(*KeyRangeRequest)(nil),           // 62: rentrelay.KeyRangeRequest
+	(*KeyList)(nil),                   // 63: rentrelay.KeyList
+	nil,                               // 64: rentrelay.SendNotificationRequest.TemplateVarsEntry
+	nil,                               // 65: rentrelay.BroadcastRequest.TemplateVarsEntry
+	(*timestamppb.Timestamp)(nil),     // 66: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),             // 67: google.protobuf.Empty
 }
 var file_rentrelay_proto_depIdxs = []int32{
 	0,   // 0: rentrelay.User.role:type_name -> rentrelay.UserRole
-	65,  // 1: rentrelay.User.created_at:type_name -> google.protobuf.Timestamp
-	65,  // 2: rentrelay.User.updated_at:type_name -> google.protobuf.Timestamp
+	66,  // 1: rentrelay.User.created_at:type_name -> google.protobuf.Timestamp
+	66,  // 2: rentrelay.User.updated_at:type_name -> google.protobuf.Timestamp
 	0,   // 3: rentrelay.RegisterRequest.role:type_name -> rentrelay.UserRole
 	5,   // 4: rentrelay.RegisterResponse.user:type_name -> rentrelay.User
 	5,   // 5: rentrelay.LoginResponse.user:type_name -> rentrelay.User
 	1,   // 6: rentrelay.Property.furnishing:type_name -> rentrelay.FurnishingType
-	65,  // 7: rentrelay.Property.available_from:type_name -> google.protobuf.Timestamp
-	65,  // 8: rentrelay.Property.created_at:type_name -> google.protobuf.Timestamp
+	66,  // 7: rentrelay.Property.available_from:type_name -> google.protobuf.Timestamp
+	66,  // 8: rentrelay.Property.created_at:type_name -> google.protobuf.Timestamp
 	1,   // 9: rentrelay.RegisterPropertyRequest.furnishing:type_name -> rentrelay.FurnishingType
-	65,  // 10: rentrelay.RegisterPropertyRequest.available_from:type_name -> google.protobuf.Timestamp
+	66,  // 10: rentrelay.RegisterPropertyRequest.available_from:type_name -> google.protobuf.Timestamp
 	1,   // 11: rentrelay.SearchPropertiesRequest.furnishing:type_name -> rentrelay.FurnishingType
 	12,  // 12: rentrelay.SearchPropertiesResponse.properties:type_name -> rentrelay.Property
-	17,  // 13: rentrelay.SetLeaseTermsRequest.terms:type_name -> rentrelay.LeaseTerms
+	18,  // 13: rentrelay.SetLeaseTermsRequest.terms:type_name -> rentrelay.LeaseTerms
 	12,  // 14: rentrelay.LandlordDashboard.properties:type_name -> rentrelay.Property
 	1,   // 15: rentrelay.RentalRequest.furnishing:type_name -> rentrelay.FurnishingType
-	65,  // 16: rentrelay.RentalRequest.move_in_date:type_name -> google.protobuf.Timestamp
-	65,  // 17: rentrelay.RentalRequest.created_at:type_name -> google.protobuf.Timestamp
+	66,  // 16: rentrelay.RentalRequest.move_in_date:type_name -> google.protobuf.Timestamp
+	66,  // 17: rentrelay.RentalRequest.created_at:type_name -> google.protobuf.Timestamp
 	1,   // 18: rentrelay.CreateRentalRequestReq.furnishing:type_name -> rentrelay.FurnishingType
-	65,  // 19: rentrelay.CreateRentalRequestReq.move_in_date:type_name -> google.protobuf.Timestamp
-	65,  // 20: rentrelay.TenantDashboard.next_due_date:type_name -> google.protobuf.Timestamp
-	21,  // 21: rentrelay.MatchRequest.rental_request:type_name -> rentrelay.RentalRequest
+	66,  // 19: rentrelay.CreateRentalRequestReq.move_in_date:type_name -> google.protobuf.Timestamp
+	66,  // 20: rentrelay.TenantDashboard.next_due_date:type_name -> google.protobuf.Timestamp
+	22,  // 21: rentrelay.MatchRequest.rental_request:type_name -> rentrelay.RentalRequest
 	12,  // 22: rentrelay.MatchCandidate.property:type_name -> rentrelay.Property
-	17,  // 23: rentrelay.MatchCandidate.terms:type_name -> rentrelay.LeaseTerms
-	25,  // 24: rentrelay.MatchResponse.candidates:type_name -> rentrelay.MatchCandidate
-	65,  // 25: rentrelay.MatchResponse.matched_at:type_name -> google.protobuf.Timestamp
-	25,  // 26: rentrelay.MatchStreamEvent.candidate:type_name -> rentrelay.MatchCandidate
+	18,  // 23: rentrelay.MatchCandidate.terms:type_name -> rentrelay.LeaseTerms
+	26,  // 24: rentrelay.MatchResponse.candidates:type_name -> rentrelay.MatchCandidate
+	66,  // 25: rentrelay.MatchResponse.matched_at:type_name -> google.protobuf.Timestamp
+	26,  // 26: rentrelay.MatchStreamEvent.candidate:type_name -> rentrelay.MatchCandidate
 	2,   // 27: rentrelay.Agreement.state:type_name -> rentrelay.AgreementState
-	65,  // 28: rentrelay.Agreement.start_date:type_name -> google.protobuf.Timestamp
-	65,  // 29: rentrelay.Agreement.end_date:type_name -> google.protobuf.Timestamp
-	65,  // 30: rentrelay.Agreement.created_at:type_name -> google.protobuf.Timestamp
-	65,  // 31: rentrelay.Agreement.updated_at:type_name -> google.protobuf.Timestamp
-	65,  // 32: rentrelay.CreateAgreementRequest.start_date:type_name -> google.protobuf.Timestamp
+	66,  // 28: rentrelay.Agreement.start_date:type_name -> google.protobuf.Timestamp
+	66,  // 29: rentrelay.Agreement.end_date:type_name -> google.protobuf.Timestamp
+	66,  // 30: rentrelay.Agreement.created_at:type_name -> google.protobuf.Timestamp
+	66,  // 31: rentrelay.Agreement.updated_at:type_name -> google.protobuf.Timestamp
+	66,  // 32: rentrelay.CreateAgreementRequest.start_date:type_name -> google.protobuf.Timestamp
 	2,   // 33: rentrelay.AgreementEvent.old_state:type_name -> rentrelay.AgreementState
 	2,   // 34: rentrelay.AgreementEvent.new_state:type_name -> rentrelay.AgreementState
-	65,  // 35: rentrelay.AgreementEvent.occurred_at:type_name -> google.protobuf.Timestamp
-	65,  // 36: rentrelay.Document.uploaded_at:type_name -> google.protobuf.Timestamp
-	37,  // 37: rentrelay.DocumentList.documents:type_name -> rentrelay.Document
+	66,  // 35: rentrelay.AgreementEvent.occurred_at:type_name -> google.protobuf.Timestamp
+	66,  // 36: rentrelay.Document.uploaded_at:type_name -> google.protobuf.Timestamp
+	38,  // 37: rentrelay.DocumentList.documents:type_name -> rentrelay.Document
 	4,   // 38: rentrelay.Notification.event:type_name -> rentrelay.NotificationEvent
 	3,   // 39: rentrelay.Notification.channel:type_name -> rentrelay.NotificationChannel
-	65,  // 40: rentrelay.Notification.created_at:type_name -> google.protobuf.Timestamp
-	65,  // 41: rentrelay.Notification.delivered_at:type_name -> google.protobuf.Timestamp
+	66,  // 40: rentrelay.Notification.created_at:type_name -> google.protobuf.Timestamp
+	66,  // 41: rentrelay.Notification.delivered_at:type_name -> google.protobuf.Timestamp
 	4,   // 42: rentrelay.SendNotificationRequest.event:type_name -> rentrelay.NotificationEvent
 	3,   // 43: rentrelay.SendNotificationRequest.channels:type_name -> rentrelay.NotificationChannel
-	63,  // 44: rentrelay.SendNotificationRequest.template_vars:type_name -> rentrelay.SendNotificationRequest.TemplateVarsEntry
+	64,  // 44: rentrelay.SendNotificationRequest.template_vars:type_name -> rentrelay.SendNotificationRequest.TemplateVarsEntry
 	4,   // 45: rentrelay.BroadcastRequest.event:type_name -> rentrelay.NotificationEvent
 	3,   // 46: rentrelay.BroadcastRequest.channels:type_name -> rentrelay.NotificationChannel
-	64,  // 47: rentrelay.BroadcastRequest.template_vars:type_name -> rentrelay.BroadcastRequest.TemplateVarsEntry
-	43,  // 48: rentrelay.NotificationList.notifications:type_name -> rentrelay.Notification
-	65,  // 49: rentrelay.PaymentReceipt.paid_at:type_name -> google.protobuf.Timestamp
-	65,  // 50: rentrelay.Dispute.raised_at:type_name -> google.protobuf.Timestamp
-	65,  // 51: rentrelay.Dispute.resolved_at:type_name -> google.protobuf.Timestamp
-	65,  // 52: rentrelay.PartitionInfo.last_heartbeat:type_name -> google.protobuf.Timestamp
-	51,  // 53: rentrelay.GetWorkerResponse.primary:type_name -> rentrelay.PartitionInfo
-	51,  // 54: rentrelay.GetWorkerResponse.replicas:type_name -> rentrelay.PartitionInfo
-	51,  // 55: rentrelay.PartitionTable.partitions:type_name -> rentrelay.PartitionInfo
+	65,  // 47: rentrelay.BroadcastRequest.template_vars:type_name -> rentrelay.BroadcastRequest.TemplateVarsEntry
+	44,  // 48: rentrelay.NotificationList.notifications:type_name -> rentrelay.Notification
+	66,  // 49: rentrelay.PaymentReceipt.paid_at:type_name -> google.protobuf.Timestamp
+	66,  // 50: rentrelay.Dispute.raised_at:type_name -> google.protobuf.Timestamp
+	66,  // 51: rentrelay.Dispute.resolved_at:type_name -> google.protobuf.Timestamp
+	66,  // 52: rentrelay.PartitionInfo.last_heartbeat:type_name -> google.protobuf.Timestamp
+	52,  // 53: rentrelay.GetWorkerResponse.primary:type_name -> rentrelay.PartitionInfo
+	52,  // 54: rentrelay.GetWorkerResponse.replicas:type_name -> rentrelay.PartitionInfo
+	52,  // 55: rentrelay.PartitionTable.partitions:type_name -> rentrelay.PartitionInfo
 	6,   // 56: rentrelay.UserService.Register:input_type -> rentrelay.RegisterRequest
 	8,   // 57: rentrelay.UserService.Login:input_type -> rentrelay.LoginRequest
 	10,  // 58: rentrelay.UserService.GetUser:input_type -> rentrelay.GetUserRequest
 	11,  // 59: rentrelay.UserService.UpdateKYC:input_type -> rentrelay.UpdateKYCRequest
 	9,   // 60: rentrelay.UserService.RefreshToken:input_type -> rentrelay.LoginResponse
 	13,  // 61: rentrelay.PropertyService.RegisterProperty:input_type -> rentrelay.RegisterPropertyRequest
-	66,  // 62: rentrelay.PropertyService.GetProperty:input_type -> google.protobuf.Empty
+	17,  // 62: rentrelay.PropertyService.GetProperty:input_type -> rentrelay.GetPropertyRequest
 	14,  // 63: rentrelay.PropertyService.SearchProperties:input_type -> rentrelay.SearchPropertiesRequest
 	16,  // 64: rentrelay.PropertyService.UpdateAvailability:input_type -> rentrelay.UpdateAvailabilityRequest
 	10,  // 65: rentrelay.PropertyService.ListByLandlord:input_type -> rentrelay.GetUserRequest
-	18,  // 66: rentrelay.LandlordService.SetLeaseTerms:input_type -> rentrelay.SetLeaseTermsRequest
+	19,  // 66: rentrelay.LandlordService.SetLeaseTerms:input_type -> rentrelay.SetLeaseTermsRequest
 	10,  // 67: rentrelay.LandlordService.GetLeaseTerms:input_type -> rentrelay.GetUserRequest
-	19,  // 68: rentrelay.LandlordService.GetDashboard:input_type -> rentrelay.LandlordDashboardRequest
-	49,  // 69: rentrelay.LandlordService.RaiseDispute:input_type -> rentrelay.DisputeRequest
-	32,  // 70: rentrelay.LandlordService.ConfirmVacation:input_type -> rentrelay.AgreementActionRequest
-	22,  // 71: rentrelay.TenantService.CreateRentalRequest:input_type -> rentrelay.CreateRentalRequestReq
+	20,  // 68: rentrelay.LandlordService.GetDashboard:input_type -> rentrelay.LandlordDashboardRequest
+	50,  // 69: rentrelay.LandlordService.RaiseDispute:input_type -> rentrelay.DisputeRequest
+	33,  // 70: rentrelay.LandlordService.ConfirmVacation:input_type -> rentrelay.AgreementActionRequest
+	23,  // 71: rentrelay.TenantService.CreateRentalRequest:input_type -> rentrelay.CreateRentalRequestReq
 	10,  // 72: rentrelay.TenantService.GetRentalRequest:input_type -> rentrelay.GetUserRequest
 	10,  // 73: rentrelay.TenantService.GetDashboard:input_type -> rentrelay.GetUserRequest
-	47,  // 74: rentrelay.TenantService.InitiatePayment:input_type -> rentrelay.PaymentRequest
-	49,  // 75: rentrelay.TenantService.RaiseDispute:input_type -> rentrelay.DisputeRequest
-	24,  // 76: rentrelay.MatchingService.FindMatches:input_type -> rentrelay.MatchRequest
-	29,  // 77: rentrelay.MatchingService.AcceptMatch:input_type -> rentrelay.AcceptMatchRequest
-	27,  // 78: rentrelay.MatchingService.StreamMatches:input_type -> rentrelay.MatchStreamRequest
-	31,  // 79: rentrelay.AgreementService.CreateAgreement:input_type -> rentrelay.CreateAgreementRequest
-	32,  // 80: rentrelay.AgreementService.GetAgreement:input_type -> rentrelay.AgreementActionRequest
-	33,  // 81: rentrelay.AgreementService.SignAgreement:input_type -> rentrelay.SignAgreementRequest
-	32,  // 82: rentrelay.AgreementService.HoldEscrow:input_type -> rentrelay.AgreementActionRequest
-	32,  // 83: rentrelay.AgreementService.StartLease:input_type -> rentrelay.AgreementActionRequest
-	34,  // 84: rentrelay.AgreementService.RecordPayment:input_type -> rentrelay.RecordPaymentReq
-	32,  // 85: rentrelay.AgreementService.InitiateNotice:input_type -> rentrelay.AgreementActionRequest
-	32,  // 86: rentrelay.AgreementService.VacateProperty:input_type -> rentrelay.AgreementActionRequest
-	35,  // 87: rentrelay.AgreementService.ReleaseEscrow:input_type -> rentrelay.ReleaseEscrowRequest
-	32,  // 88: rentrelay.AgreementService.TransitionState:input_type -> rentrelay.AgreementActionRequest
-	32,  // 89: rentrelay.AgreementService.StreamAgreementEvents:input_type -> rentrelay.AgreementActionRequest
-	38,  // 90: rentrelay.DocumentService.UploadDocument:input_type -> rentrelay.UploadDocumentRequest
-	32,  // 91: rentrelay.DocumentService.GetDocument:input_type -> rentrelay.AgreementActionRequest
-	39,  // 92: rentrelay.DocumentService.VerifyDocument:input_type -> rentrelay.VerifyDocumentRequest
-	41,  // 93: rentrelay.DocumentService.LockDocuments:input_type -> rentrelay.LockDocumentsRequest
-	41,  // 94: rentrelay.DocumentService.UnlockDocuments:input_type -> rentrelay.LockDocumentsRequest
-	32,  // 95: rentrelay.DocumentService.ListByAgreement:input_type -> rentrelay.AgreementActionRequest
-	44,  // 96: rentrelay.NotificationService.Send:input_type -> rentrelay.SendNotificationRequest
-	45,  // 97: rentrelay.NotificationService.Broadcast:input_type -> rentrelay.BroadcastRequest
+	48,  // 74: rentrelay.TenantService.InitiatePayment:input_type -> rentrelay.PaymentRequest
+	50,  // 75: rentrelay.TenantService.RaiseDispute:input_type -> rentrelay.DisputeRequest
+	25,  // 76: rentrelay.MatchingService.FindMatches:input_type -> rentrelay.MatchRequest
+	30,  // 77: rentrelay.MatchingService.AcceptMatch:input_type -> rentrelay.AcceptMatchRequest
+	28,  // 78: rentrelay.MatchingService.StreamMatches:input_type -> rentrelay.MatchStreamRequest
+	32,  // 79: rentrelay.AgreementService.CreateAgreement:input_type -> rentrelay.CreateAgreementRequest
+	33,  // 80: rentrelay.AgreementService.GetAgreement:input_type -> rentrelay.AgreementActionRequest
+	34,  // 81: rentrelay.AgreementService.SignAgreement:input_type -> rentrelay.SignAgreementRequest
+	33,  // 82: rentrelay.AgreementService.HoldEscrow:input_type -> rentrelay.AgreementActionRequest
+	33,  // 83: rentrelay.AgreementService.StartLease:input_type -> rentrelay.AgreementActionRequest
+	35,  // 84: rentrelay.AgreementService.RecordPayment:input_type -> rentrelay.RecordPaymentReq
+	33,  // 85: rentrelay.AgreementService.InitiateNotice:input_type -> rentrelay.AgreementActionRequest
+	33,  // 86: rentrelay.AgreementService.VacateProperty:input_type -> rentrelay.AgreementActionRequest
+	36,  // 87: rentrelay.AgreementService.ReleaseEscrow:input_type -> rentrelay.ReleaseEscrowRequest
+	33,  // 88: rentrelay.AgreementService.TransitionState:input_type -> rentrelay.AgreementActionRequest
+	33,  // 89: rentrelay.AgreementService.StreamAgreementEvents:input_type -> rentrelay.AgreementActionRequest
+	39,  // 90: rentrelay.DocumentService.UploadDocument:input_type -> rentrelay.UploadDocumentRequest
+	33,  // 91: rentrelay.DocumentService.GetDocument:input_type -> rentrelay.AgreementActionRequest
+	40,  // 92: rentrelay.DocumentService.VerifyDocument:input_type -> rentrelay.VerifyDocumentRequest
+	42,  // 93: rentrelay.DocumentService.LockDocuments:input_type -> rentrelay.LockDocumentsRequest
+	42,  // 94: rentrelay.DocumentService.UnlockDocuments:input_type -> rentrelay.LockDocumentsRequest
+	33,  // 95: rentrelay.DocumentService.ListByAgreement:input_type -> rentrelay.AgreementActionRequest
+	45,  // 96: rentrelay.NotificationService.Send:input_type -> rentrelay.SendNotificationRequest
+	46,  // 97: rentrelay.NotificationService.Broadcast:input_type -> rentrelay.BroadcastRequest
 	10,  // 98: rentrelay.NotificationService.GetHistory:input_type -> rentrelay.GetUserRequest
 	10,  // 99: rentrelay.NotificationService.Subscribe:input_type -> rentrelay.GetUserRequest
-	52,  // 100: rentrelay.StorageController.GetWorkerForKey:input_type -> rentrelay.GetWorkerRequest
-	66,  // 101: rentrelay.StorageController.GetAllPartitions:input_type -> google.protobuf.Empty
-	54,  // 102: rentrelay.StorageController.Heartbeat:input_type -> rentrelay.HeartbeatRequest
-	51,  // 103: rentrelay.StorageController.RegisterWorker:input_type -> rentrelay.PartitionInfo
-	54,  // 104: rentrelay.StorageController.WatchRebalance:input_type -> rentrelay.HeartbeatRequest
-	57,  // 105: rentrelay.StorageWorker.Put:input_type -> rentrelay.KVPutRequest
-	59,  // 106: rentrelay.StorageWorker.Get:input_type -> rentrelay.KVGetRequest
-	59,  // 107: rentrelay.StorageWorker.Delete:input_type -> rentrelay.KVGetRequest
-	61,  // 108: rentrelay.StorageWorker.ListKeys:input_type -> rentrelay.KeyRangeRequest
-	57,  // 109: rentrelay.StorageWorker.TransferKeys:input_type -> rentrelay.KVPutRequest
+	53,  // 100: rentrelay.StorageController.GetWorkerForKey:input_type -> rentrelay.GetWorkerRequest
+	67,  // 101: rentrelay.StorageController.GetAllPartitions:input_type -> google.protobuf.Empty
+	55,  // 102: rentrelay.StorageController.Heartbeat:input_type -> rentrelay.HeartbeatRequest
+	52,  // 103: rentrelay.StorageController.RegisterWorker:input_type -> rentrelay.PartitionInfo
+	55,  // 104: rentrelay.StorageController.WatchRebalance:input_type -> rentrelay.HeartbeatRequest
+	58,  // 105: rentrelay.StorageWorker.Put:input_type -> rentrelay.KVPutRequest
+	60,  // 106: rentrelay.StorageWorker.Get:input_type -> rentrelay.KVGetRequest
+	60,  // 107: rentrelay.StorageWorker.Delete:input_type -> rentrelay.KVGetRequest
+	62,  // 108: rentrelay.StorageWorker.ListKeys:input_type -> rentrelay.KeyRangeRequest
+	58,  // 109: rentrelay.StorageWorker.TransferKeys:input_type -> rentrelay.KVPutRequest
 	7,   // 110: rentrelay.UserService.Register:output_type -> rentrelay.RegisterResponse
 	9,   // 111: rentrelay.UserService.Login:output_type -> rentrelay.LoginResponse
 	5,   // 112: rentrelay.UserService.GetUser:output_type -> rentrelay.User
@@ -5366,50 +5414,50 @@ var file_rentrelay_proto_depIdxs = []int32{
 	15,  // 117: rentrelay.PropertyService.SearchProperties:output_type -> rentrelay.SearchPropertiesResponse
 	12,  // 118: rentrelay.PropertyService.UpdateAvailability:output_type -> rentrelay.Property
 	15,  // 119: rentrelay.PropertyService.ListByLandlord:output_type -> rentrelay.SearchPropertiesResponse
-	17,  // 120: rentrelay.LandlordService.SetLeaseTerms:output_type -> rentrelay.LeaseTerms
-	17,  // 121: rentrelay.LandlordService.GetLeaseTerms:output_type -> rentrelay.LeaseTerms
-	20,  // 122: rentrelay.LandlordService.GetDashboard:output_type -> rentrelay.LandlordDashboard
-	50,  // 123: rentrelay.LandlordService.RaiseDispute:output_type -> rentrelay.Dispute
-	30,  // 124: rentrelay.LandlordService.ConfirmVacation:output_type -> rentrelay.Agreement
-	21,  // 125: rentrelay.TenantService.CreateRentalRequest:output_type -> rentrelay.RentalRequest
-	21,  // 126: rentrelay.TenantService.GetRentalRequest:output_type -> rentrelay.RentalRequest
-	23,  // 127: rentrelay.TenantService.GetDashboard:output_type -> rentrelay.TenantDashboard
-	48,  // 128: rentrelay.TenantService.InitiatePayment:output_type -> rentrelay.PaymentReceipt
-	50,  // 129: rentrelay.TenantService.RaiseDispute:output_type -> rentrelay.Dispute
-	26,  // 130: rentrelay.MatchingService.FindMatches:output_type -> rentrelay.MatchResponse
-	30,  // 131: rentrelay.MatchingService.AcceptMatch:output_type -> rentrelay.Agreement
-	28,  // 132: rentrelay.MatchingService.StreamMatches:output_type -> rentrelay.MatchStreamEvent
-	30,  // 133: rentrelay.AgreementService.CreateAgreement:output_type -> rentrelay.Agreement
-	30,  // 134: rentrelay.AgreementService.GetAgreement:output_type -> rentrelay.Agreement
-	30,  // 135: rentrelay.AgreementService.SignAgreement:output_type -> rentrelay.Agreement
-	30,  // 136: rentrelay.AgreementService.HoldEscrow:output_type -> rentrelay.Agreement
-	30,  // 137: rentrelay.AgreementService.StartLease:output_type -> rentrelay.Agreement
-	48,  // 138: rentrelay.AgreementService.RecordPayment:output_type -> rentrelay.PaymentReceipt
-	30,  // 139: rentrelay.AgreementService.InitiateNotice:output_type -> rentrelay.Agreement
-	30,  // 140: rentrelay.AgreementService.VacateProperty:output_type -> rentrelay.Agreement
-	30,  // 141: rentrelay.AgreementService.ReleaseEscrow:output_type -> rentrelay.Agreement
-	30,  // 142: rentrelay.AgreementService.TransitionState:output_type -> rentrelay.Agreement
-	36,  // 143: rentrelay.AgreementService.StreamAgreementEvents:output_type -> rentrelay.AgreementEvent
-	37,  // 144: rentrelay.DocumentService.UploadDocument:output_type -> rentrelay.Document
-	37,  // 145: rentrelay.DocumentService.GetDocument:output_type -> rentrelay.Document
-	40,  // 146: rentrelay.DocumentService.VerifyDocument:output_type -> rentrelay.VerifyDocumentResponse
-	66,  // 147: rentrelay.DocumentService.LockDocuments:output_type -> google.protobuf.Empty
-	66,  // 148: rentrelay.DocumentService.UnlockDocuments:output_type -> google.protobuf.Empty
-	42,  // 149: rentrelay.DocumentService.ListByAgreement:output_type -> rentrelay.DocumentList
-	43,  // 150: rentrelay.NotificationService.Send:output_type -> rentrelay.Notification
-	66,  // 151: rentrelay.NotificationService.Broadcast:output_type -> google.protobuf.Empty
-	46,  // 152: rentrelay.NotificationService.GetHistory:output_type -> rentrelay.NotificationList
-	43,  // 153: rentrelay.NotificationService.Subscribe:output_type -> rentrelay.Notification
-	53,  // 154: rentrelay.StorageController.GetWorkerForKey:output_type -> rentrelay.GetWorkerResponse
-	56,  // 155: rentrelay.StorageController.GetAllPartitions:output_type -> rentrelay.PartitionTable
-	66,  // 156: rentrelay.StorageController.Heartbeat:output_type -> google.protobuf.Empty
-	66,  // 157: rentrelay.StorageController.RegisterWorker:output_type -> google.protobuf.Empty
-	55,  // 158: rentrelay.StorageController.WatchRebalance:output_type -> rentrelay.RebalanceEvent
-	58,  // 159: rentrelay.StorageWorker.Put:output_type -> rentrelay.KVPutResponse
-	60,  // 160: rentrelay.StorageWorker.Get:output_type -> rentrelay.KVGetResponse
-	66,  // 161: rentrelay.StorageWorker.Delete:output_type -> google.protobuf.Empty
-	62,  // 162: rentrelay.StorageWorker.ListKeys:output_type -> rentrelay.KeyList
-	66,  // 163: rentrelay.StorageWorker.TransferKeys:output_type -> google.protobuf.Empty
+	18,  // 120: rentrelay.LandlordService.SetLeaseTerms:output_type -> rentrelay.LeaseTerms
+	18,  // 121: rentrelay.LandlordService.GetLeaseTerms:output_type -> rentrelay.LeaseTerms
+	21,  // 122: rentrelay.LandlordService.GetDashboard:output_type -> rentrelay.LandlordDashboard
+	51,  // 123: rentrelay.LandlordService.RaiseDispute:output_type -> rentrelay.Dispute
+	31,  // 124: rentrelay.LandlordService.ConfirmVacation:output_type -> rentrelay.Agreement
+	22,  // 125: rentrelay.TenantService.CreateRentalRequest:output_type -> rentrelay.RentalRequest
+	22,  // 126: rentrelay.TenantService.GetRentalRequest:output_type -> rentrelay.RentalRequest
+	24,  // 127: rentrelay.TenantService.GetDashboard:output_type -> rentrelay.TenantDashboard
+	49,  // 128: rentrelay.TenantService.InitiatePayment:output_type -> rentrelay.PaymentReceipt
+	51,  // 129: rentrelay.TenantService.RaiseDispute:output_type -> rentrelay.Dispute
+	27,  // 130: rentrelay.MatchingService.FindMatches:output_type -> rentrelay.MatchResponse
+	31,  // 131: rentrelay.MatchingService.AcceptMatch:output_type -> rentrelay.Agreement
+	29,  // 132: rentrelay.MatchingService.StreamMatches:output_type -> rentrelay.MatchStreamEvent
+	31,  // 133: rentrelay.AgreementService.CreateAgreement:output_type -> rentrelay.Agreement
+	31,  // 134: rentrelay.AgreementService.GetAgreement:output_type -> rentrelay.Agreement
+	31,  // 135: rentrelay.AgreementService.SignAgreement:output_type -> rentrelay.Agreement
+	31,  // 136: rentrelay.AgreementService.HoldEscrow:output_type -> rentrelay.Agreement
+	31,  // 137: rentrelay.AgreementService.StartLease:output_type -> rentrelay.Agreement
+	49,  // 138: rentrelay.AgreementService.RecordPayment:output_type -> rentrelay.PaymentReceipt
+	31,  // 139: rentrelay.AgreementService.InitiateNotice:output_type -> rentrelay.Agreement
+	31,  // 140: rentrelay.AgreementService.VacateProperty:output_type -> rentrelay.Agreement
+	31,  // 141: rentrelay.AgreementService.ReleaseEscrow:output_type -> rentrelay.Agreement
+	31,  // 142: rentrelay.AgreementService.TransitionState:output_type -> rentrelay.Agreement
+	37,  // 143: rentrelay.AgreementService.StreamAgreementEvents:output_type -> rentrelay.AgreementEvent
+	38,  // 144: rentrelay.DocumentService.UploadDocument:output_type -> rentrelay.Document
+	38,  // 145: rentrelay.DocumentService.GetDocument:output_type -> rentrelay.Document
+	41,  // 146: rentrelay.DocumentService.VerifyDocument:output_type -> rentrelay.VerifyDocumentResponse
+	67,  // 147: rentrelay.DocumentService.LockDocuments:output_type -> google.protobuf.Empty
+	67,  // 148: rentrelay.DocumentService.UnlockDocuments:output_type -> google.protobuf.Empty
+	43,  // 149: rentrelay.DocumentService.ListByAgreement:output_type -> rentrelay.DocumentList
+	44,  // 150: rentrelay.NotificationService.Send:output_type -> rentrelay.Notification
+	67,  // 151: rentrelay.NotificationService.Broadcast:output_type -> google.protobuf.Empty
+	47,  // 152: rentrelay.NotificationService.GetHistory:output_type -> rentrelay.NotificationList
+	44,  // 153: rentrelay.NotificationService.Subscribe:output_type -> rentrelay.Notification
+	54,  // 154: rentrelay.StorageController.GetWorkerForKey:output_type -> rentrelay.GetWorkerResponse
+	57,  // 155: rentrelay.StorageController.GetAllPartitions:output_type -> rentrelay.PartitionTable
+	67,  // 156: rentrelay.StorageController.Heartbeat:output_type -> google.protobuf.Empty
+	67,  // 157: rentrelay.StorageController.RegisterWorker:output_type -> google.protobuf.Empty
+	56,  // 158: rentrelay.StorageController.WatchRebalance:output_type -> rentrelay.RebalanceEvent
+	59,  // 159: rentrelay.StorageWorker.Put:output_type -> rentrelay.KVPutResponse
+	61,  // 160: rentrelay.StorageWorker.Get:output_type -> rentrelay.KVGetResponse
+	67,  // 161: rentrelay.StorageWorker.Delete:output_type -> google.protobuf.Empty
+	63,  // 162: rentrelay.StorageWorker.ListKeys:output_type -> rentrelay.KeyList
+	67,  // 163: rentrelay.StorageWorker.TransferKeys:output_type -> google.protobuf.Empty
 	110, // [110:164] is the sub-list for method output_type
 	56,  // [56:110] is the sub-list for method input_type
 	56,  // [56:56] is the sub-list for extension type_name
@@ -5428,7 +5476,7 @@ func file_rentrelay_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_rentrelay_proto_rawDesc), len(file_rentrelay_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   60,
+			NumMessages:   61,
 			NumExtensions: 0,
 			NumServices:   10,
 		},

@@ -294,7 +294,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PropertyServiceClient interface {
 	RegisterProperty(ctx context.Context, in *RegisterPropertyRequest, opts ...grpc.CallOption) (*Property, error)
-	GetProperty(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Property, error)
+	GetProperty(ctx context.Context, in *GetPropertyRequest, opts ...grpc.CallOption) (*Property, error)
 	SearchProperties(ctx context.Context, in *SearchPropertiesRequest, opts ...grpc.CallOption) (*SearchPropertiesResponse, error)
 	UpdateAvailability(ctx context.Context, in *UpdateAvailabilityRequest, opts ...grpc.CallOption) (*Property, error)
 	ListByLandlord(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*SearchPropertiesResponse, error)
@@ -318,7 +318,7 @@ func (c *propertyServiceClient) RegisterProperty(ctx context.Context, in *Regist
 	return out, nil
 }
 
-func (c *propertyServiceClient) GetProperty(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Property, error) {
+func (c *propertyServiceClient) GetProperty(ctx context.Context, in *GetPropertyRequest, opts ...grpc.CallOption) (*Property, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Property)
 	err := c.cc.Invoke(ctx, PropertyService_GetProperty_FullMethodName, in, out, cOpts...)
@@ -363,7 +363,7 @@ func (c *propertyServiceClient) ListByLandlord(ctx context.Context, in *GetUserR
 // for forward compatibility.
 type PropertyServiceServer interface {
 	RegisterProperty(context.Context, *RegisterPropertyRequest) (*Property, error)
-	GetProperty(context.Context, *emptypb.Empty) (*Property, error)
+	GetProperty(context.Context, *GetPropertyRequest) (*Property, error)
 	SearchProperties(context.Context, *SearchPropertiesRequest) (*SearchPropertiesResponse, error)
 	UpdateAvailability(context.Context, *UpdateAvailabilityRequest) (*Property, error)
 	ListByLandlord(context.Context, *GetUserRequest) (*SearchPropertiesResponse, error)
@@ -380,7 +380,7 @@ type UnimplementedPropertyServiceServer struct{}
 func (UnimplementedPropertyServiceServer) RegisterProperty(context.Context, *RegisterPropertyRequest) (*Property, error) {
 	return nil, status.Error(codes.Unimplemented, "method RegisterProperty not implemented")
 }
-func (UnimplementedPropertyServiceServer) GetProperty(context.Context, *emptypb.Empty) (*Property, error) {
+func (UnimplementedPropertyServiceServer) GetProperty(context.Context, *GetPropertyRequest) (*Property, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProperty not implemented")
 }
 func (UnimplementedPropertyServiceServer) SearchProperties(context.Context, *SearchPropertiesRequest) (*SearchPropertiesResponse, error) {
@@ -432,7 +432,7 @@ func _PropertyService_RegisterProperty_Handler(srv interface{}, ctx context.Cont
 }
 
 func _PropertyService_GetProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetPropertyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -444,7 +444,7 @@ func _PropertyService_GetProperty_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: PropertyService_GetProperty_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PropertyServiceServer).GetProperty(ctx, req.(*emptypb.Empty))
+		return srv.(PropertyServiceServer).GetProperty(ctx, req.(*GetPropertyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -145,10 +145,12 @@ message UpdateAvailabilityRequest {
   string property_id   = 1;
   bool   is_available  = 2;
 }
-
+message GetPropertyRequest {
+  string property_id = 1;
+}
 service PropertyService {
   rpc RegisterProperty    (RegisterPropertyRequest)  returns (Property);
-  rpc GetProperty         (google.protobuf.Empty)    returns (Property);     // uses metadata
+  rpc GetProperty         (GetPropertyRequest)    returns (Property);     // uses metadata
   rpc SearchProperties    (SearchPropertiesRequest)  returns (SearchPropertiesResponse);
   rpc UpdateAvailability  (UpdateAvailabilityRequest)returns (Property);
   rpc ListByLandlord      (GetUserRequest)            returns (SearchPropertiesResponse);
