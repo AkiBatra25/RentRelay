@@ -1,0 +1,11 @@
+FROM golang:1.26-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -buildvcs=false -o /out/storage-worker ./cmd/storage-worker
+FROM alpine:3.20
+WORKDIR /app
+COPY --from=builder /out/storage-worker /app/storage-worker
+EXPOSE 50061
+CMD ["/app/storage-worker"]

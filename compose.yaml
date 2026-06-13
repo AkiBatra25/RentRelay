@@ -92,9 +92,20 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      storage-controller:
+        condition: service_started
+      storage-worker-0:
+        condition: service_started
+      storage-worker-1:
+        condition: service_started
+      storage-worker-2:
+        condition: service_started
+      storage-worker-3:
+        condition: service_started
     environment:
       MONGO_URI: mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin
       MONGO_DATABASE: rentrelay
+      STORAGE_CONTROLLER_ADDR: storage-controller:50060
       GRPC_PORT: 50055
     ports:
       - "50055:50055"
@@ -153,6 +164,76 @@ services:
       GRPC_PORT: 50058
     ports:
       - "50058:50058"
+
+  storage-controller:
+    build:
+      context: .
+      dockerfile: Dockerfile.storage-controller
+    container_name: rentrelay-storage-controller
+    restart: unless-stopped
+    environment:
+      GRPC_PORT: 50060
+    ports:
+      - "50060:50060"
+
+  storage-worker-0:
+    <<: &storage-worker
+      build:
+        context: .
+        dockerfile: Dockerfile.storage-worker
+      restart: unless-stopped
+      depends_on:
+        storage-controller:
+          condition: service_started
+      environment: &storage-worker-environment
+        CONTROLLER_ADDR: storage-controller:50060
+        GRPC_PORT: 50061
+        HEARTBEAT_INTERVAL_SEC: 5
+    container_name: rentrelay-storage-worker-0
+    environment:
+      <<: *storage-worker-environment
+      WORKER_ID: storage-worker-0
+      WORKER_ADDRESS: storage-worker-0:50061
+      SHARD_START: 0
+      SHARD_END: 63
+    ports:
+      - "51061:50061"
+
+  storage-worker-1:
+    <<: *storage-worker
+    container_name: rentrelay-storage-worker-1
+    environment:
+      <<: *storage-worker-environment
+      WORKER_ID: storage-worker-1
+      WORKER_ADDRESS: storage-worker-1:50061
+      SHARD_START: 64
+      SHARD_END: 127
+    ports:
+      - "51062:50061"
+
+  storage-worker-2:
+    <<: *storage-worker
+    container_name: rentrelay-storage-worker-2
+    environment:
+      <<: *storage-worker-environment
+      WORKER_ID: storage-worker-2
+      WORKER_ADDRESS: storage-worker-2:50061
+      SHARD_START: 128
+      SHARD_END: 191
+    ports:
+      - "51063:50061"
+
+  storage-worker-3:
+    <<: *storage-worker
+    container_name: rentrelay-storage-worker-3
+    environment:
+      <<: *storage-worker-environment
+      WORKER_ID: storage-worker-3
+      WORKER_ADDRESS: storage-worker-3:50061
+      SHARD_START: 192
+      SHARD_END: 255
+    ports:
+      - "51064:50061"
 
 volumes:
   mongodb-data:
