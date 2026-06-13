@@ -29,6 +29,9 @@ func NewInMemoryService(propertyClient rentrelaypb.PropertyServiceClient) *Servi
 }
 
 func (s *Service) SetLeaseTerms(ctx context.Context, req *rentrelaypb.SetLeaseTermsRequest) (*rentrelaypb.LeaseTerms, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "request is required")
+	}
 	if strings.TrimSpace(req.LandlordId) == "" {
 		return nil, status.Error(codes.InvalidArgument, "landlord_id is required")
 	}
@@ -52,6 +55,9 @@ func (s *Service) SetLeaseTerms(ctx context.Context, req *rentrelaypb.SetLeaseTe
 	if strings.TrimSpace(terms.PaymentDueDay) == "" {
 		return nil, status.Error(codes.InvalidArgument, "payment_due_day is required")
 	}
+	if err := s.ensureLandlordOwnsProperty(ctx, terms.LandlordId, terms.PropertyId); err != nil {
+		return nil, err
+	}
 
 	if err := s.repo.SaveLeaseTerms(ctx, terms); err != nil {
 		return nil, status.Errorf(codes.Internal, "save lease terms: %v", err)
@@ -61,7 +67,20 @@ func (s *Service) SetLeaseTerms(ctx context.Context, req *rentrelaypb.SetLeaseTe
 }
 
 func (s *Service) GetLeaseTerms(ctx context.Context, req *rentrelaypb.GetLeaseTermsRequest) (*rentrelaypb.LeaseTerms, error) {
-	terms, err := s.repo.FindLeaseTerms(ctx, strings.TrimSpace(req.LandlordId), strings.TrimSpace(req.PropertyId))
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "request is required")
+	}
+
+	landlordID := strings.TrimSpace(req.LandlordId)
+	propertyID := strings.TrimSpace(req.PropertyId)
+	if landlordID == "" {
+		return nil, status.Error(codes.InvalidArgument, "landlord_id is required")
+	}
+	if propertyID == "" {
+		return nil, status.Error(codes.InvalidArgument, "property_id is required")
+	}
+
+	terms, err := s.repo.FindLeaseTerms(ctx, landlordID, propertyID)
 	if err != nil {
 		if errors.Is(err, ErrLeaseTermsNotFound) {
 			return nil, status.Error(codes.NotFound, "lease terms not found")
@@ -73,6 +92,10 @@ func (s *Service) GetLeaseTerms(ctx context.Context, req *rentrelaypb.GetLeaseTe
 }
 
 func (s *Service) GetDashboard(ctx context.Context, req *rentrelaypb.LandlordDashboardRequest) (*rentrelaypb.LandlordDashboard, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "request is required")
+	}
+
 	landlordID := strings.TrimSpace(req.LandlordId)
 	if landlordID == "" {
 		return nil, status.Error(codes.InvalidArgument, "landlord_id is required")
@@ -111,4 +134,26 @@ func (s *Service) RaiseDispute(ctx context.Context, req *rentrelaypb.DisputeRequ
 
 func (s *Service) ConfirmVacation(ctx context.Context, req *rentrelaypb.AgreementActionRequest) (*rentrelaypb.Agreement, error) {
 	return nil, status.Error(codes.Unimplemented, "ConfirmVacation will be implemented after AgreementService")
+}
+
+func (s *Service) ensureLandlordOwnsProperty(ctx context.Context, landlordID string, propertyID string) error {
+	if s.propertyClient == nil {
+		return nil
+	}
+
+	property, err := s.propertyClient.GetProperty(ctx, &rentrelaypb.GetPropertyRequest{PropertyId: propertyID})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return status.Error(codes.NotFound, "property not found")
+		}
+		return status.Errorf(codes.Unavailable, "get property: %v", err)
+	}
+	if property == nil {
+		return status.Error(codes.Unavailable, "property service returned an empty property")
+	}
+	if property.LandlordId != landlordID {
+		return status.Error(codes.PermissionDenied, "property does not belong to landlord")
+	}
+
+	return nil
 }

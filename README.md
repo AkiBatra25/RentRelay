@@ -8,7 +8,7 @@ The project models a real distributed backend system for rental workflows such a
 
 ## Current Status
 
-RentRelay currently has two implemented backend service foundations:
+RentRelay currently has five implemented backend service foundations:
 
 ### Implemented
 
@@ -34,15 +34,33 @@ RentRelay currently has two implemented backend service foundations:
   - In-memory repository
   - MongoDB repository
   - gRPC smoke client
+- Landlord Service
+  - Set lease terms
+  - Get lease terms
+  - Get landlord dashboard
+  - Calls Property Service over gRPC
+  - In-memory repository
+  - MongoDB repository
+  - gRPC smoke client
+- Tenant Service
+  - Create rental request
+  - Get rental request
+  - Get tenant dashboard placeholder
+  - In-memory repository
+  - MongoDB repository
+  - gRPC smoke client
+- Matching Service
+  - Search available properties through Property Service
+  - Fetch optional lease terms through Landlord Service
+  - Score and rank match candidates
+  - gRPC smoke client
+  - Docker support
 - Local MongoDB using Docker Compose
+- Docker Compose integration for implemented services
 - Kubernetes manifests drafted for the larger system
 
 ### Planned
 
-- Docker Compose integration for all implemented services
-- Landlord Service
-- Tenant Service
-- Matching Service
 - Agreement Service
 - Notification Service
 - Document Service
@@ -956,13 +974,13 @@ RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Proto
 Current implemented milestone:
 
 ```text
-Implemented Go-based gRPC User and Property service foundations with protobuf contracts, repository-based storage abstraction, MongoDB persistence, Dockerized local infrastructure, and smoke-test validation.
+Implemented Go-based gRPC User, Property, Landlord, and Tenant service foundations with protobuf contracts, repository-based storage abstraction, MongoDB persistence, Dockerized local infrastructure, service-to-service calls, and smoke-test validation.
 ```
 
 Possible resume bullet:
 
 ```text
-Built a cloud-native microservices backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing User and Property services with repository-based persistence and end-to-end smoke testing.
+Built a cloud-native microservices backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing User, Property, Landlord, and Tenant services with repository-based persistence, service-to-service communication, and end-to-end smoke testing.
 ```
 
 ---

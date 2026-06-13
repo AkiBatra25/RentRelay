@@ -9,9 +9,8 @@ import (
 	"time"
 
 	rentrelaypb "github.com/AkiBatra25/rentrelay/gen/go"
-	"github.com/AkiBatra25/rentrelay/internal/landlord"
+	"github.com/AkiBatra25/rentrelay/internal/tenant"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
@@ -20,7 +19,7 @@ import (
 func main() {
 	port := os.Getenv("GRPC_PORT")
 	if port == "" {
-		port = "50053"
+		port = "50054"
 	}
 
 	listener, err := net.Listen("tcp", ":"+port)
@@ -28,27 +27,11 @@ func main() {
 		log.Fatalf("listen on port %s: %v", port, err)
 	}
 
-	propertyAddr := os.Getenv("PROPERTY_SERVICE_ADDR")
-	if propertyAddr == "" {
-		propertyAddr = "localhost:50052"
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	propertyConn, err := grpc.DialContext(ctx, propertyAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("connect to property service at %s: %v", propertyAddr, err)
-	}
-	defer propertyConn.Close()
-
-	propertyClient := rentrelaypb.NewPropertyServiceClient(propertyConn)
-
 	server := grpc.NewServer()
-	landlordService, closeStore := newLandlordService(propertyClient)
+	tenantService, closeStore := newTenantService()
 	defer closeStore()
 
-	rentrelaypb.RegisterLandlordServiceServer(server, landlordService)
+	rentrelaypb.RegisterTenantServiceServer(server, tenantService)
 
 	healthServer := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(server, healthServer)
@@ -56,17 +39,17 @@ func main() {
 
 	reflection.Register(server)
 
-	fmt.Printf("landlord-service listening on :%s\n", port)
+	fmt.Printf("tenant-service listening on :%s\n", port)
 	if err := server.Serve(listener); err != nil {
 		log.Fatalf("serve grpc: %v", err)
 	}
 }
 
-func newLandlordService(propertyClient rentrelaypb.PropertyServiceClient) (*landlord.Service, func()) {
+func newTenantService() (*tenant.Service, func()) {
 	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
-		log.Println("MONGO_URI not set; using in-memory landlord repository")
-		return landlord.NewInMemoryService(propertyClient), func() {}
+		log.Println("MONGO_URI not set; using in-memory tenant repository")
+		return tenant.NewInMemoryService(), func() {}
 	}
 
 	database := os.Getenv("MONGO_DATABASE")
@@ -77,13 +60,13 @@ func newLandlordService(propertyClient rentrelaypb.PropertyServiceClient) (*land
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	repo, err := landlord.NewMongoRepository(ctx, mongoURI, database)
+	repo, err := tenant.NewMongoRepository(ctx, mongoURI, database)
 	if err != nil {
 		log.Fatalf("connect to MongoDB: %v", err)
 	}
 
-	log.Printf("connected landlord-service to MongoDB database %q", database)
-	return landlord.NewService(repo, propertyClient), func() {
+	log.Printf("connected tenant-service to MongoDB database %q", database)
+	return tenant.NewService(repo), func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := repo.Close(ctx); err != nil {

@@ -197,7 +197,7 @@ message LandlordDashboard {
 
 service LandlordService {
   rpc SetLeaseTerms       (SetLeaseTermsRequest)    returns (LeaseTerms);
-  rpc GetLeaseTerms       (GetLeaseTermsRequest)           returns (LeaseTerms);   // uses property_id in metadata
+  rpc GetLeaseTerms       (GetLeaseTermsRequest)           returns (LeaseTerms);
   rpc GetDashboard        (LandlordDashboardRequest) returns (LandlordDashboard);
   rpc RaiseDispute        (DisputeRequest)           returns (Dispute);
   rpc ConfirmVacation     (AgreementActionRequest)   returns (Agreement);
