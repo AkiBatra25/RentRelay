@@ -83,6 +83,22 @@ services:
     ports:
       - "50054:50054"
 
+  agreement-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.agreement-service
+    container_name: rentrelay-agreement-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin
+      MONGO_DATABASE: rentrelay
+      GRPC_PORT: 50055
+    ports:
+      - "50055:50055"
+
   matching-service:
     build:
       context: .
@@ -96,12 +112,47 @@ services:
         condition: service_started
       tenant-service:
         condition: service_started
+      agreement-service:
+        condition: service_started
     environment:
       PROPERTY_SERVICE_ADDR: property-service:50052
       LANDLORD_SERVICE_ADDR: landlord-service:50053
+      AGREEMENT_SERVICE_ADDR: agreement-service:50055
       GRPC_PORT: 50056
     ports:
       - "50056:50056"
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.notification-service
+    container_name: rentrelay-notification-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin
+      MONGO_DATABASE: rentrelay
+      GRPC_PORT: 50057
+    ports:
+      - "50057:50057"
+
+  document-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.document-service
+    container_name: rentrelay-document-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin
+      MONGO_DATABASE: rentrelay
+      GRPC_PORT: 50058
+    ports:
+      - "50058:50058"
 
 volumes:
   mongodb-data:

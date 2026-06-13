@@ -67,6 +67,16 @@ func main() {
 	if len(resp.Candidates) > 0 {
 		best := resp.Candidates[0]
 		fmt.Printf("best property_id=%s score=%.3f reason=%s\n", best.PropertyId, best.Score, best.MatchReason)
+
+		agreement, err := matchingClient.AcceptMatch(ctx, &rentrelaypb.AcceptMatchRequest{
+			TenantId:   tenantID,
+			PropertyId: best.PropertyId,
+			LandlordId: best.LandlordId,
+		})
+		if err != nil {
+			log.Fatalf("accept match: %v", err)
+		}
+		fmt.Printf("accepted agreement_id=%s state=%s\n", agreement.AgreementId, agreement.State)
 	}
 }
 

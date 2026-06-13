@@ -15,14 +15,20 @@ import (
 type Service struct {
 	rentrelaypb.UnimplementedMatchingServiceServer
 
-	propertyClient rentrelaypb.PropertyServiceClient
-	landlordClient rentrelaypb.LandlordServiceClient
+	propertyClient  rentrelaypb.PropertyServiceClient
+	landlordClient  rentrelaypb.LandlordServiceClient
+	agreementClient rentrelaypb.AgreementServiceClient
 }
 
-func NewService(propertyClient rentrelaypb.PropertyServiceClient, landlordClient rentrelaypb.LandlordServiceClient) *Service {
+func NewService(
+	propertyClient rentrelaypb.PropertyServiceClient,
+	landlordClient rentrelaypb.LandlordServiceClient,
+	agreementClient rentrelaypb.AgreementServiceClient,
+) *Service {
 	return &Service{
-		propertyClient: propertyClient,
-		landlordClient: landlordClient,
+		propertyClient:  propertyClient,
+		landlordClient:  landlordClient,
+		agreementClient: agreementClient,
 	}
 }
 
@@ -135,7 +141,56 @@ func scoreCandidate(rental *rentrelaypb.RentalRequest, property *rentrelaypb.Pro
 }
 
 func (s *Service) AcceptMatch(ctx context.Context, req *rentrelaypb.AcceptMatchRequest) (*rentrelaypb.Agreement, error) {
-	return nil, status.Error(codes.Unimplemented, "AcceptMatch will be implemented after AgreementService")
+	if req == nil || strings.TrimSpace(req.TenantId) == "" || strings.TrimSpace(req.PropertyId) == "" || strings.TrimSpace(req.LandlordId) == "" {
+		return nil, status.Error(codes.InvalidArgument, "tenant_id, property_id, and landlord_id are required")
+	}
+	if s.propertyClient == nil || s.agreementClient == nil {
+		return nil, status.Error(codes.FailedPrecondition, "property and agreement service clients are required")
+	}
+
+	property, err := s.propertyClient.GetProperty(ctx, &rentrelaypb.GetPropertyRequest{PropertyId: req.PropertyId})
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "get property: %v", err)
+	}
+	if property.LandlordId != req.LandlordId {
+		return nil, status.Error(codes.PermissionDenied, "property does not belong to landlord")
+	}
+	if !property.IsAvailable {
+		return nil, status.Error(codes.FailedPrecondition, "property is not available")
+	}
+
+	leaseMonths := int32(11)
+	noticeDays := int32(30)
+	if terms := s.getLeaseTerms(ctx, property); terms != nil {
+		if terms.LeaseDurationMo > 0 {
+			leaseMonths = terms.LeaseDurationMo
+		}
+		if terms.NoticePeriodDays > 0 {
+			noticeDays = terms.NoticePeriodDays
+		}
+	}
+
+	agreement, err := s.agreementClient.CreateAgreement(ctx, &rentrelaypb.CreateAgreementRequest{
+		TenantId:      req.TenantId,
+		LandlordId:    req.LandlordId,
+		PropertyId:    req.PropertyId,
+		MonthlyRent:   property.RentMonthly,
+		DepositAmount: property.DepositAmt,
+		LeaseMonths:   leaseMonths,
+		NoticeDays:    noticeDays,
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "create agreement: %v", err)
+	}
+
+	if _, err := s.propertyClient.UpdateAvailability(ctx, &rentrelaypb.UpdateAvailabilityRequest{
+		PropertyId:  req.PropertyId,
+		IsAvailable: false,
+	}); err != nil {
+		return nil, status.Errorf(codes.Unavailable, "mark property unavailable: %v", err)
+	}
+
+	return agreement, nil
 }
 
 func validateCandidate(candidate *rentrelaypb.MatchCandidate) error {

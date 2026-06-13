@@ -36,6 +36,15 @@ func main() {
 	}
 	defer landlordConn.Close()
 
+	agreementConn, err := grpc.NewClient(
+		envOrDefault("AGREEMENT_SERVICE_ADDR", "localhost:50055"),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		log.Fatalf("create agreement service client: %v", err)
+	}
+	defer agreementConn.Close()
+
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("listen on port %s: %v", port, err)
@@ -45,6 +54,7 @@ func main() {
 	rentrelaypb.RegisterMatchingServiceServer(server, matching.NewService(
 		rentrelaypb.NewPropertyServiceClient(propertyConn),
 		rentrelaypb.NewLandlordServiceClient(landlordConn),
+		rentrelaypb.NewAgreementServiceClient(agreementConn),
 	))
 
 	healthServer := health.NewServer()

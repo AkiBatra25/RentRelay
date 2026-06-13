@@ -8,7 +8,7 @@ The project models a real distributed backend system for rental workflows such a
 
 ## Current Status
 
-RentRelay currently has five implemented backend service foundations:
+RentRelay currently has eight implemented backend service foundations:
 
 ### Implemented
 
@@ -55,15 +55,30 @@ RentRelay currently has five implemented backend service foundations:
   - Score and rank match candidates
   - gRPC smoke client
   - Docker support
+- Agreement Service
+  - Agreement creation and retrieval
+  - Two-party signing
+  - Escrow hold
+  - Lease start and termination lifecycle
+  - MongoDB repository
+  - State-machine validation tests
+- Notification Service
+  - Send and broadcast notifications
+  - Notification history
+  - Live in-process subscriber streams
+  - MongoDB persistence with TTL index
+- Document Service
+  - Upload and SHA-256 hashing
+  - Hash verification
+  - Agreement document listing
+  - Document locking and unlocking
+  - MongoDB persistence
 - Local MongoDB using Docker Compose
 - Docker Compose integration for implemented services
 - Kubernetes manifests drafted for the larger system
 
 ### Planned
 
-- Agreement Service
-- Notification Service
-- Document Service
 - Storage Controller and Storage Workers
 - REST API Gateway
 - Kubernetes deployment validation

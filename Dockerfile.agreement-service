@@ -1,0 +1,19 @@
+FROM golang:1.26-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN go build -buildvcs=false -o /out/agreement-service ./cmd/agreement-service
+
+FROM alpine:3.20
+
+WORKDIR /app
+
+COPY --from=builder /out/agreement-service /app/agreement-service
+
+EXPOSE 50055
+
+CMD ["/app/agreement-service"]
