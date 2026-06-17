@@ -3,9 +3,11 @@ package storagecontroller
 import (
 	"context"
 	"hash/crc32"
+	"log"
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	rentrelaypb "github.com/AkiBatra25/rentrelay/gen/go"
 	"google.golang.org/grpc"
@@ -16,6 +18,10 @@ import (
 )
 
 const hashSlots = 256
+
+// deadAfter is how long without a heartbeat before we declare a worker dead.
+// Workers send heartbeats every 5 seconds, so 15 seconds = 3 missed heartbeats.
+const deadAfter = 15 * time.Second
 
 type Service struct {
 	rentrelaypb.UnimplementedStorageControllerServer
@@ -29,6 +35,46 @@ func NewService() *Service {
 	return &Service{partitions: make(map[string]*rentrelaypb.PartitionInfo)}
 }
 
+// StartWatchdog launches a background goroutine that runs forever.
+// Every 10 seconds it checks every registered worker.
+// If a worker's last heartbeat was more than 15 seconds ago — mark it dead.
+// Call this once when starting the controller binary.
+func (s *Service) StartWatchdog() {
+	go func() {
+		ticker := time.NewTicker(10 * time.Second)
+		defer ticker.Stop()
+		for range ticker.C {
+			s.checkWorkerHealth()
+		}
+	}()
+	log.Println("storage-controller: watchdog started — checking worker health every 10s")
+}
+
+// checkWorkerHealth is called by the watchdog every 10 seconds.
+// It looks at every worker's LastHeartbeat timestamp.
+// If too old, it sets IsAlive = false.
+func (s *Service) checkWorkerHealth() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	now := time.Now()
+	for _, worker := range s.partitions {
+		if !worker.IsAlive {
+			continue // already known dead, skip
+		}
+		if worker.LastHeartbeat == nil {
+			continue
+		}
+		lastSeen := worker.LastHeartbeat.AsTime()
+		if now.Sub(lastSeen) > deadAfter {
+			worker.IsAlive = false
+			s.version++ // partition table changed
+			log.Printf("storage-controller: worker %s declared DEAD (last heartbeat: %s ago)",
+				worker.WorkerId, now.Sub(lastSeen).Round(time.Second))
+		}
+	}
+}
+
 func (s *Service) RegisterWorker(ctx context.Context, worker *rentrelaypb.PartitionInfo) (*emptypb.Empty, error) {
 	if worker == nil || strings.TrimSpace(worker.WorkerId) == "" || strings.TrimSpace(worker.WorkerAddress) == "" {
 		return nil, status.Error(codes.InvalidArgument, "worker_id and worker_address are required")
@@ -39,11 +85,12 @@ func (s *Service) RegisterWorker(ctx context.Context, worker *rentrelaypb.Partit
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	copy := clonePartition(worker)
-	copy.IsAlive = true
-	copy.LastHeartbeat = timestamppb.Now()
-	s.partitions[copy.WorkerId] = copy
+	cp := clonePartition(worker)
+	cp.IsAlive = true
+	cp.LastHeartbeat = timestamppb.Now()
+	s.partitions[cp.WorkerId] = cp
 	s.version++
+	log.Printf("storage-controller: worker %s registered (shards %d-%d)", cp.WorkerId, cp.ShardStart, cp.ShardEnd)
 	return &emptypb.Empty{}, nil
 }
 
@@ -57,8 +104,13 @@ func (s *Service) Heartbeat(ctx context.Context, req *rentrelaypb.HeartbeatReque
 	if !ok {
 		return nil, status.Error(codes.NotFound, "worker is not registered")
 	}
+	wasDeadBefore := !worker.IsAlive
 	worker.IsAlive = true
 	worker.LastHeartbeat = timestamppb.Now()
+	if wasDeadBefore {
+		s.version++
+		log.Printf("storage-controller: worker %s came back ALIVE", req.WorkerId)
+	}
 	return &emptypb.Empty{}, nil
 }
 
@@ -131,6 +183,6 @@ func clonePartition(partition *rentrelaypb.PartitionInfo) *rentrelaypb.Partition
 	if partition == nil {
 		return nil
 	}
-	copy := *partition
-	return &copy
+	cp := *partition
+	return &cp
 }

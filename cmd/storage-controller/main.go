@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 
 	rentrelaypb "github.com/AkiBatra25/rentrelay/gen/go"
 	"github.com/AkiBatra25/rentrelay/internal/storagecontroller"
@@ -15,24 +14,22 @@ import (
 )
 
 func main() {
-	port := envOrDefault("GRPC_PORT", "50060")
-	listener, err := net.Listen("tcp", ":"+port)
+	service := storagecontroller.NewService()
+
+	// Start the watchdog — it runs in background forever
+	// checking worker heartbeats and marking dead workers
+	service.StartWatchdog()
+
+	listener, err := net.Listen("tcp", ":50060")
 	if err != nil {
 		log.Fatal(err)
 	}
 	server := grpc.NewServer()
-	rentrelaypb.RegisterStorageControllerServer(server, storagecontroller.NewService())
+	rentrelaypb.RegisterStorageControllerServer(server, service)
 	healthServer := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(server, healthServer)
 	healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
 	reflection.Register(server)
-	fmt.Printf("storage-controller listening on :%s\n", port)
+	fmt.Println("storage-controller listening on :50060 (watchdog active)")
 	log.Fatal(server.Serve(listener))
-}
-
-func envOrDefault(name, fallback string) string {
-	if value := os.Getenv(name); value != "" {
-		return value
-	}
-	return fallback
 }

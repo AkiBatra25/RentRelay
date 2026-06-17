@@ -25,6 +25,10 @@ func main() {
 	shardEnd := int32Env("SHARD_END")
 	port := envOrDefault("GRPC_PORT", "50061")
 
+	// WAL file path — defaults to /tmp/<workerID>.log
+	// Each worker gets its own log file so they don't overwrite each other
+	walPath := envOrDefault("WAL_PATH", "/tmp/"+workerID+".log")
+
 	controllerConn, err := grpc.NewClient(
 		envOrDefault("CONTROLLER_ADDR", "localhost:50060"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -35,7 +39,13 @@ func main() {
 	defer controllerConn.Close()
 	controller := rentrelaypb.NewStorageControllerClient(controllerConn)
 
-	service := storageworker.NewService(workerID)
+	// Use WAL-backed service so data survives restarts
+	service, err := storageworker.NewServiceWithWAL(workerID, walPath)
+	if err != nil {
+		log.Fatalf("open WAL at %s: %v", walPath, err)
+	}
+	defer service.Close()
+
 	registerWorker(controller, workerID, workerAddress, shardStart, shardEnd)
 	go heartbeatLoop(controller, service, workerID)
 
@@ -49,7 +59,8 @@ func main() {
 	grpc_health_v1.RegisterHealthServer(server, healthServer)
 	healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
 	reflection.Register(server)
-	fmt.Printf("storage-worker %s listening on :%s for shards %d-%d\n", workerID, port, shardStart, shardEnd)
+	fmt.Printf("storage-worker %s listening on :%s for shards %d-%d (WAL: %s)\n",
+		workerID, port, shardStart, shardEnd, walPath)
 	log.Fatal(server.Serve(listener))
 }
 
