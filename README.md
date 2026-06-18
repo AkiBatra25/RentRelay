@@ -78,19 +78,22 @@ RentRelay currently has ten implemented backend service foundations:
   - Partitions keys across a 256-slot hash space
   - Selects one primary and two replica workers
   - Exposes partition-table and routing RPCs
+  - Watchdog goroutine detects dead workers after 3 missed heartbeats
+  - Automatically marks workers as unavailable and stops routing to them
 - Storage Worker
   - Stores versioned key-value records in memory
   - Supports put, get, delete, and key listing
   - Supports client-streamed key transfer
   - Participates in replicated 2-of-3 quorum writes
+  - Write-ahead log persists every put and delete to disk before applying to memory
+  - Replays WAL on startup to restore full state after crash or restart
+  - Each worker maintains its own WAL file at a configurable path
 - Local MongoDB using Docker Compose
 - Docker Compose integration for implemented services
 - Kubernetes manifests drafted for the larger system
 
 ### Planned
 
-- Persistent worker storage and write-ahead logging
-- Worker failure detection and automatic rebalancing
 - Agreement Service integration with replicated storage
 - REST API Gateway
 - Kubernetes deployment validation
@@ -580,6 +583,12 @@ Common variables:
 | `GRPC_PORT` | gRPC server port |
 | `USER_SERVICE_ADDR` | Address used by UserService smoke client |
 | `PROPERTY_SERVICE_ADDR` | Address used by PropertyService smoke client |
+| `WORKER_ID` | Unique ID for a storage worker (e.g. worker-1) |
+| `WORKER_ADDRESS` | Address the worker advertises to the controller (e.g. localhost:50061) |
+| `SHARD_START` | Start of hash slot range this worker owns (0-255) |
+| `SHARD_END` | End of hash slot range this worker owns (0-255) |
+| `WAL_PATH` | Path to write-ahead log file (default: /tmp/<worker-id>.log) |
+| `CONTROLLER_ADDR` | Address of storage controller (default: localhost:50060) |
 
 ---
 
@@ -837,7 +846,9 @@ Only use `-v` when you are okay deleting local MongoDB data.
 | NotificationService | 50057 |
 | DocumentService | 50058 |
 | Storage Controller | 50060 |
-| Storage Worker | 50061 |
+| Storage Worker 1 | 50061 |
+| Storage Worker 2 | 50062 |
+| Storage Worker 3 | 50063 |
 | MongoDB | 27017 |
 
 ---
@@ -990,6 +1001,10 @@ Completed learning milestones:
 8. Added smoke client for end-to-end validation
 9. Dockerized UserService
 10. Built PropertyService using same architecture pattern
+11. Built all ten gRPC service foundations with smoke clients
+12. Implemented distributed storage with quorum writes and heartbeats
+13. Added write-ahead log to storage worker for crash recovery
+14. Added watchdog to storage controller for automatic dead worker detection
 ```
 
 ---
@@ -1001,13 +1016,13 @@ RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Proto
 Current implemented milestone:
 
 ```text
-Implemented ten Go-based gRPC service foundations for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service calls, replicated quorum writes, and smoke-test validation.
+Implemented ten Go-based gRPC service foundations for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service calls, replicated quorum writes, write-ahead log crash recovery, watchdog-based failure detection, and smoke-test validation.
 ```
 
 Possible resume bullet:
 
 ```text
-Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten service foundations plus partitioned distributed storage with primary-replica routing, heartbeats, and 2-of-3 quorum writes.
+Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten service foundations plus partitioned distributed storage with primary-replica routing, 2-of-3 quorum writes, write-ahead log crash recovery, and automatic dead worker detection via heartbeat watchdog.
 ```
 
 ---
