@@ -91,11 +91,22 @@ RentRelay currently has ten implemented backend service foundations:
 - Local MongoDB using Docker Compose
 - Docker Compose integration for implemented services
 - Kubernetes manifests drafted for the larger system
+- API Gateway
+  - REST HTTP/JSON gateway on port 8080
+  - POST /api/users/register — register a new user
+  - POST /api/users/login — login and get a token
+  - GET  /api/users/{id} — get user by ID
+  - POST /api/properties — register a new property
+  - GET  /api/properties/search?city=&max_rent=&bedrooms= — search properties
+  - GET  /api/properties/{id} — get property by ID
+  - POST /api/agreements — create a rental agreement
+  - GET  /api/agreements/{id} — get agreement by ID
+  - POST /api/agreements/{id}/sign — sign an agreement
+  - GET  /health — health check endpoint
 
 ### Planned
 
 - Agreement Service integration with replicated storage
-- REST API Gateway
 - Kubernetes deployment validation
 - Cloud deployment on AWS, GCP, or Azure
 
@@ -589,6 +600,8 @@ Common variables:
 | `SHARD_END` | End of hash slot range this worker owns (0-255) |
 | `WAL_PATH` | Path to write-ahead log file (default: /tmp/<worker-id>.log) |
 | `CONTROLLER_ADDR` | Address of storage controller (default: localhost:50060) |
+| `HTTP_PORT` | Port for the REST API gateway (default: 8080) |
+| `AGREEMENT_SERVICE_ADDR` | Address of agreement service (default: localhost:50055) |
 
 ---
 
@@ -690,6 +703,44 @@ Expected output:
 registered property_id=property-...
 search results=1
 updated availability=false
+```
+
+---
+
+## Run API Gateway
+
+Start MongoDB and all backend services first:
+
+```bash
+docker compose up -d mongodb
+bash start-all.sh
+```
+
+In a new terminal, start the gateway:
+
+```bash
+cd "/mnt/d/e drive/RentRelay"
+go run -buildvcs=false ./cmd/api-gateway
+```
+
+Test endpoints:
+
+```bash
+# Health check
+curl http://localhost:8080/health
+
+# Register a user
+curl -s -X POST http://localhost:8080/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Harshita","email":"h@test.com","phone":"9999999999","password":"pass123","role":"tenant"}'
+
+# Search properties
+curl -s "http://localhost:8080/api/properties/search?city=Bengaluru&max_rent=30000&bedrooms=2"
+
+# Create an agreement
+curl -s -X POST http://localhost:8080/api/agreements \
+  -H "Content-Type: application/json" \
+  -d '{"tenant_id":"t-1","landlord_id":"l-1","property_id":"p-1","monthly_rent":25000,"deposit_amount":75000,"lease_months":11,"notice_days":30}'
 ```
 
 ---
@@ -837,6 +888,7 @@ Only use `-v` when you are okay deleting local MongoDB data.
 
 | Component | Port |
 |---|---|
+| API Gateway (HTTP) | 8080 |
 | UserService | 50051 |
 | PropertyService | 50052 |
 | LandlordService | 50053 |
@@ -981,7 +1033,7 @@ Notification Service
 Document Service
 Storage Controller
 Storage Workers
-API Gateway
+API Gateway (implemented)
 ```
 
 ---
@@ -1005,6 +1057,7 @@ Completed learning milestones:
 12. Implemented distributed storage with quorum writes and heartbeats
 13. Added write-ahead log to storage worker for crash recovery
 14. Added watchdog to storage controller for automatic dead worker detection
+15. Built REST API gateway translating HTTP/JSON to gRPC for all core services
 ```
 
 ---
@@ -1016,13 +1069,13 @@ RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Proto
 Current implemented milestone:
 
 ```text
-Implemented ten Go-based gRPC service foundations for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service calls, replicated quorum writes, write-ahead log crash recovery, watchdog-based failure detection, and smoke-test validation.
+Implemented ten Go-based gRPC microservices for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service gRPC calls, replicated quorum writes, write-ahead log crash recovery, watchdog-based failure detection, a REST API gateway for HTTP/JSON clients, and full smoke-test validation.
 ```
 
 Possible resume bullet:
 
 ```text
-Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten service foundations plus partitioned distributed storage with primary-replica routing, 2-of-3 quorum writes, write-ahead log crash recovery, and automatic dead worker detection via heartbeat watchdog.
+Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten microservice foundations plus partitioned distributed storage with primary-replica routing, 2-of-3 quorum writes, write-ahead log crash recovery, automatic dead worker detection via heartbeat watchdog, and a REST API gateway exposing HTTP/JSON endpoints for all core workflows.
 ```
 
 ---
