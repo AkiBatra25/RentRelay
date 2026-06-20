@@ -62,6 +62,11 @@ RentRelay currently has ten implemented backend service foundations:
   - Lease start and termination lifecycle
   - MongoDB repository
   - State-machine validation tests
+  - Replicated storage integration via ReplicatedRepository
+  - Every state change written to MongoDB and storage workers simultaneously
+  - FindByID falls back to storage layer if MongoDB is unavailable
+  - Requires 2-of-3 quorum acknowledgement before confirming write
+  - Enabled by setting STORAGE_CONTROLLER_ADDR environment variable
 - Notification Service
   - Send and broadcast notifications
   - Notification history
@@ -106,7 +111,6 @@ RentRelay currently has ten implemented backend service foundations:
 
 ### Planned
 
-- Agreement Service integration with replicated storage
 - Kubernetes deployment validation
 - Cloud deployment on AWS, GCP, or Azure
 
@@ -602,6 +606,7 @@ Common variables:
 | `CONTROLLER_ADDR` | Address of storage controller (default: localhost:50060) |
 | `HTTP_PORT` | Port for the REST API gateway (default: 8080) |
 | `AGREEMENT_SERVICE_ADDR` | Address of agreement service (default: localhost:50055) |
+| `STORAGE_CONTROLLER_ADDR` | If set, Agreement Service replicates to storage workers |
 
 ---
 
@@ -1058,6 +1063,7 @@ Completed learning milestones:
 13. Added write-ahead log to storage worker for crash recovery
 14. Added watchdog to storage controller for automatic dead worker detection
 15. Built REST API gateway translating HTTP/JSON to gRPC for all core services
+16. Integrated Agreement Service with distributed storage replication and quorum writes
 ```
 
 ---
@@ -1069,13 +1075,13 @@ RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Proto
 Current implemented milestone:
 
 ```text
-Implemented ten Go-based gRPC microservices for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service gRPC calls, replicated quorum writes, write-ahead log crash recovery, watchdog-based failure detection, a REST API gateway for HTTP/JSON clients, and full smoke-test validation.
+Implemented ten Go-based gRPC microservices for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service gRPC calls, replicated quorum writes, write-ahead log crash recovery, watchdog-based failure detection, agreement-to-storage replication with quorum and disaster recovery fallback, a REST API gateway for HTTP/JSON clients, and full smoke-test validation.
 ```
 
 Possible resume bullet:
 
 ```text
-Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten microservice foundations plus partitioned distributed storage with primary-replica routing, 2-of-3 quorum writes, write-ahead log crash recovery, automatic dead worker detection via heartbeat watchdog, and a REST API gateway exposing HTTP/JSON endpoints for all core workflows.
+Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten microservice foundations, partitioned distributed storage with primary-replica routing, 2-of-3 quorum writes, WAL crash recovery, dead worker watchdog, agreement replication with MongoDB-to-storage dual writes and automatic fallback, and a REST API gateway exposing HTTP/JSON endpoints for all core workflows.
 ```
 
 ---
