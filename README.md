@@ -96,6 +96,10 @@ RentRelay currently has ten implemented backend service foundations:
 - Local MongoDB using Docker Compose
 - Docker Compose integration for implemented services
 - Kubernetes manifests drafted for the larger system
+- Dockerfiles for all 11 services
+  - Multi-stage builds using golang:1.26-alpine builder and alpine:3.20 runner
+  - Produces minimal images with only the compiled binary
+  - All services containerized and tested locally
 - API Gateway
   - REST HTTP/JSON gateway on port 8080
   - POST /api/users/register — register a new user
@@ -108,6 +112,11 @@ RentRelay currently has ten implemented backend service foundations:
   - GET  /api/agreements/{id} — get agreement by ID
   - POST /api/agreements/{id}/sign — sign an agreement
   - GET  /health — health check endpoint
+- GitHub Actions CI/CD pipeline
+  - Runs all tests on every push to main
+  - Builds all 11 Docker images if tests pass
+  - Pushes images to Docker Hub automatically
+  - No manual build or push steps needed
 
 ### Planned
 
@@ -540,24 +549,80 @@ docker compose version
 
 ## Setup
 
-Clone the repository:
+### Prerequisites
 
-```powershell
-git clone <your-repository-url>
-cd RentRelay\rentrelay
+Install these tools:
+
+- Go 1.26+ from https://go.dev/dl
+- Git from https://git-scm.com
+- Docker Desktop from https://www.docker.com/products/docker-desktop
+
+Verify:
+
+```bash
+go version
+git --version
+docker version
 ```
 
-Install Go dependencies:
+### Clone and install
 
-```powershell
+```bash
+git clone https://github.com/AkiBatra25/RentRelay
+cd RentRelay
 go mod tidy
 ```
 
-Run tests:
+### Run all tests
 
-```powershell
+```bash
 go test -buildvcs=false ./...
 ```
+
+All 10 internal packages should show ok.
+
+### Start MongoDB
+
+```bash
+docker compose up -d mongodb
+docker compose ps
+```
+
+Wait until status shows healthy.
+
+### Start all services at once
+
+```bash
+bash start-all.sh
+```
+
+Wait for the message: ALL SERVICES RUNNING
+
+### Run all smoke tests
+
+Open a new terminal:
+
+```bash
+bash test-all.sh
+```
+
+All 9 services should show PASSED.
+
+### Start the API gateway
+
+Open another terminal:
+
+```bash
+go run -buildvcs=false ./cmd/api-gateway
+```
+
+Test it:
+
+```bash
+curl http://localhost:8080/health
+```
+
+Expected: {"status":"ok","time":"..."}
 
 ---
 
@@ -709,6 +774,60 @@ registered property_id=property-...
 search results=1
 updated availability=false
 ```
+
+---
+
+## Docker Hub
+
+All service images are published automatically to Docker Hub via GitHub Actions.
+
+Pull any image:
+
+```bash
+docker pull 30301207/rentrelay-user-service:latest
+docker pull 30301207/rentrelay-api-gateway:latest
+```
+
+Available images:
+
+| Image | Port |
+|---|---|
+| 30301207/rentrelay-api-gateway | 8080 |
+| 30301207/rentrelay-user-service | 50051 |
+| 30301207/rentrelay-property-service | 50052 |
+| 30301207/rentrelay-landlord-service | 50053 |
+| 30301207/rentrelay-tenant-service | 50054 |
+| 30301207/rentrelay-agreement-service | 50055 |
+| 30301207/rentrelay-matching-service | 50056 |
+| 30301207/rentrelay-notification-service | 50057 |
+| 30301207/rentrelay-document-service | 50058 |
+| 30301207/rentrelay-storage-controller | 50060 |
+| 30301207/rentrelay-storage-worker | 50061-50063 |
+
+---
+
+## CI/CD Pipeline
+
+Every push to the main branch triggers the GitHub Actions pipeline:
+
+```text
+Push to main
+    ↓
+Run all tests (go test ./...)
+    ↓ (only if tests pass)
+Build 11 Docker images
+    ↓
+Push to Docker Hub
+```
+
+To add secrets for the pipeline to work on a fork:
+
+Go to Settings → Secrets and variables → Actions and add:
+
+| Secret | Value |
+|---|---|
+| DOCKER_USERNAME | your Docker Hub username |
+| DOCKER_PASSWORD | your Docker Hub password |
 
 ---
 
@@ -1064,6 +1183,8 @@ Completed learning milestones:
 14. Added watchdog to storage controller for automatic dead worker detection
 15. Built REST API gateway translating HTTP/JSON to gRPC for all core services
 16. Integrated Agreement Service with distributed storage replication and quorum writes
+17. Wrote Dockerfiles for all 11 services using multi-stage builds
+18. Set up GitHub Actions CI/CD pipeline that tests, builds, and pushes on every commit
 ```
 
 ---
@@ -1075,13 +1196,13 @@ RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Proto
 Current implemented milestone:
 
 ```text
-Implemented ten Go-based gRPC microservices for users, properties, landlords, tenants, matching, agreements, notifications, documents, and distributed storage, with protobuf contracts, MongoDB persistence, Dockerized infrastructure, service-to-service gRPC calls, replicated quorum writes, write-ahead log crash recovery, watchdog-based failure detection, agreement-to-storage replication with quorum and disaster recovery fallback, a REST API gateway for HTTP/JSON clients, and full smoke-test validation.
+Implemented eleven Go-based gRPC microservices and a REST API gateway for a cloud-native rental platform, with protobuf contracts, MongoDB persistence, distributed storage with WAL crash recovery and 2-of-3 quorum writes, dead worker watchdog, agreement replication with dual writes and disaster recovery fallback, multi-stage Docker builds for all services, and a GitHub Actions CI/CD pipeline that automatically tests, builds, and pushes all images on every commit.
 ```
 
 Possible resume bullet:
 
 ```text
-Built a cloud-native backend in Go using gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes manifests, implementing ten microservice foundations, partitioned distributed storage with primary-replica routing, 2-of-3 quorum writes, WAL crash recovery, dead worker watchdog, agreement replication with MongoDB-to-storage dual writes and automatic fallback, and a REST API gateway exposing HTTP/JSON endpoints for all core workflows.
+Built a cloud-native rental backend in Go with gRPC, Protocol Buffers, MongoDB, Docker, Kubernetes, and GitHub Actions CI/CD, implementing eleven microservices, partitioned distributed storage with quorum writes, WAL crash recovery, heartbeat watchdog, agreement replication with automatic fallback, a REST API gateway, and a fully automated pipeline that tests and publishes 11 Docker images on every push.
 ```
 
 ---
