@@ -40,7 +40,6 @@ func (r *ReplicatedRepository) FindByID(ctx context.Context, agreementID string)
 	if !errors.Is(err, ErrAgreementNotFound) {
 		return nil, err
 	}
-
 	agreement, err = r.replicator.Load(ctx, agreementID)
 	if err != nil {
 		return nil, err
