@@ -17,7 +17,7 @@ func main() {
 	userAddr      := envOrDefault("USER_SERVICE_ADDR",      "localhost:50051")
 	propertyAddr  := envOrDefault("PROPERTY_SERVICE_ADDR",  "localhost:50052")
 	agreementAddr := envOrDefault("AGREEMENT_SERVICE_ADDR", "localhost:50055")
-	httpPort      := envOrDefault("HTTP_PORT",              "8080")
+	httpPort      := envOrDefault("PORT",                   "8080")
 
 	// Connect to each gRPC service
 	// insecure means no TLS — fine for local dev
