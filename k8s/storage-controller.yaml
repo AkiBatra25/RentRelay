@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-controller
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-controller
+  template:
+    metadata:
+      labels:
+        app: storage-controller
+    spec:
+      containers:
+        - name: storage-controller
+          image: rentrelay/storage-controller:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 50060
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50060"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-controller
+  namespace: rentrelay
+spec:
+  selector:
+    app: storage-controller
+  ports:
+    - name: grpc
+      port: 50060
+      targetPort: 50060

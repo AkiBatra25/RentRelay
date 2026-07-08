@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-service
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+        - name: matching-service
+          image: rentrelay/matching-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 50056
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: PROPERTY_SERVICE_ADDR
+
+              value: "property-service:50052"
+
+            - name: LANDLORD_SERVICE_ADDR
+
+              value: "landlord-service:50053"
+
+            - name: AGREEMENT_SERVICE_ADDR
+
+              value: "agreement-service:50055"
+            - name: GRPC_PORT
+              value: "50056"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: matching-service
+  ports:
+    - name: grpc
+      port: 50056
+      targetPort: 50056

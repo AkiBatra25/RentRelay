@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agreement-service
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agreement-service
+  template:
+    metadata:
+      labels:
+        app: agreement-service
+    spec:
+      containers:
+        - name: agreement-service
+          image: rentrelay/agreement-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 50055
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: STORAGE_CONTROLLER_ADDR
+              value: "storage-controller:50060"
+            - name: GRPC_PORT
+              value: "50055"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agreement-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: agreement-service
+  ports:
+    - name: grpc
+      port: 50055
+      targetPort: 50055

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: document-service
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: document-service
+  template:
+    metadata:
+      labels:
+        app: document-service
+    spec:
+      containers:
+        - name: document-service
+          image: rentrelay/document-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 50058
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50058"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: document-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: document-service
+  ports:
+    - name: grpc
+      port: 50058
+      targetPort: 50058

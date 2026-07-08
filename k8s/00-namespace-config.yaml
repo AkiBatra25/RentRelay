@@ -1,57 +1,14 @@
----
-# ─────────────────────────────────────────────────────────────────────────────
-# Namespace
-# ─────────────────────────────────────────────────────────────────────────────
 apiVersion: v1
 kind: Namespace
 metadata:
   name: rentrelay
-  labels:
-    app.kubernetes.io/name: rentrelay
-    environment: production
 
 ---
-# ─────────────────────────────────────────────────────────────────────────────
-# ConfigMap — shared env config for all services
-# ─────────────────────────────────────────────────────────────────────────────
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: rentrelay-config
   namespace: rentrelay
 data:
-  MONGODB_DATABASE:        "rentrelay_db"
-  MONGODB_REPLICA_SET:     "rs0"
-  REDIS_DB:                "0"
-  KAFKA_TOPIC_NOTIFY:      "rentrelay.notifications"
-  KAFKA_TOPIC_MATCH:       "rentrelay.matches"
-  KAFKA_TOPIC_PAYMENTS:    "rentrelay.payments"
-  KAFKA_CONSUMER_GROUP:    "rentrelay-services"
-  GRPC_MAX_RECV_SIZE:      "4194304"    # 4MB
-  GRPC_MAX_SEND_SIZE:      "4194304"
-  LOG_LEVEL:               "info"
-  HEARTBEAT_INTERVAL_SEC:  "5"
-  HEARTBEAT_TIMEOUT_SEC:   "10"
-  QUORUM_REPLICAS:         "2"         # write to 2-of-3
-  TOTAL_REPLICAS:          "3"
-  STORAGE_WORKERS:         "4"
-  MATCHING_QUEUE_SIZE:     "1000"
-
----
-# ─────────────────────────────────────────────────────────────────────────────
-# Secret — credentials (use Sealed Secrets or Vault in production)
-# ─────────────────────────────────────────────────────────────────────────────
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rentrelay-secrets
-  namespace: rentrelay
-type: Opaque
-stringData:
-  MONGODB_URI:     "mongodb://rentrelay:password@mongodb-0.mongodb:27017,mongodb-1.mongodb:27017,mongodb-2.mongodb:27017/rentrelay_db?replicaSet=rs0"
-  REDIS_URL:       "redis://:password@redis:6379/0"
-  KAFKA_BROKERS:   "kafka-0.kafka:9092,kafka-1.kafka:9092"
-  JWT_PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
-  JWT_PUBLIC_KEY:  "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"
-  SMS_API_KEY:     "your-twilio-or-msg91-key"
-  SMTP_PASSWORD:   "your-smtp-password"
+  MONGO_DATABASE: "rentrelay"
+  HEARTBEAT_INTERVAL_SEC: "5"

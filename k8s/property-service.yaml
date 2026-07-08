@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: property-service
+  namespace: rentrelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: property-service
+  template:
+    metadata:
+      labels:
+        app: property-service
+    spec:
+      containers:
+        - name: property-service
+          image: rentrelay/property-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 50052
+          envFrom:
+            - configMapRef:
+                name: rentrelay-config
+            - secretRef:
+                name: rentrelay-secrets
+          env:
+            - name: GRPC_PORT
+              value: "50052"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: property-service
+  namespace: rentrelay
+spec:
+  selector:
+    app: property-service
+  ports:
+    - name: grpc
+      port: 50052
+      targetPort: 50052
