@@ -1288,25 +1288,8 @@ Completed learning milestones:
 
 ---
 
-## Resume Summary
 
-RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Protocol Buffers, MongoDB, Docker, and Kubernetes.
-
-Current implemented milestone:
-
-```text
-Implemented eleven Go-based gRPC microservices and a REST API gateway for a cloud-native rental platform, with protobuf contracts, MongoDB persistence, distributed storage with WAL crash recovery and 2-of-3 quorum writes, dead worker watchdog, agreement replication with dual writes and disaster recovery fallback, multi-stage Docker builds for all services, a GitHub Actions CI/CD pipeline that automatically tests and publishes 11 Docker images on every commit, and full Kubernetes deployment validated on Minikube with 15 running pods and live API verification.
-```
-
-Possible resume bullet:
-
-```text
-Built a cloud-native rental backend in Go with gRPC, Protocol Buffers, MongoDB, Docker, Kubernetes, and GitHub Actions CI/CD, implementing eleven microservices, partitioned distributed storage with quorum writes, WAL crash recovery, heartbeat watchdog, agreement replication with automatic fallback, a REST API gateway, a fully automated pipeline that tests and publishes 11 Docker images on every push, and a validated Kubernetes deployment with 15 pods verified via live HTTP API calls.
-```
-
----
-
-## Built By
+## Built By 
 
 Akshat Batra — https://github.com/AkiBatra25
 
