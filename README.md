@@ -117,10 +117,18 @@ RentRelay currently has ten implemented backend service foundations:
   - Builds all 11 Docker images if tests pass
   - Pushes images to Docker Hub automatically
   - No manual build or push steps needed
+- Kubernetes deployment on Minikube (validated locally)
+  - All 15 pods running simultaneously including 4 storage workers
+  - Namespace, ConfigMap, and Secrets configured
+  - Individual k8s manifests for every service
+  - API Gateway exposed as NodePort service
+  - Agreement replication confirmed active through storage-controller
+  - WAL replay confirmed on storage worker startup
+  - All HTTP endpoints tested and verified through kubectl port-forward
+  - deploy-local.sh script automates the full deployment
 
 ### Planned
 
-- Kubernetes deployment validation
 - Cloud deployment on AWS, GCP, or Azure
 
 ---
@@ -195,6 +203,12 @@ rentrelay/
 │       ├── mongo_repository.go
 │       ├── service.go
 │       └── service_test.go
+│   └── storageworker/
+│       ├── service.go
+│       ├── service_test.go
+│       └── wal.go
+│   └── storagecontroller/
+│       └── service.go
 │
 ├── proto/
 │   └── rentrelay.proto
@@ -206,11 +220,28 @@ rentrelay/
 │   ├── 00-namespace-config.yaml
 │   ├── 01-services.yaml
 │   ├── 02-storage-cluster.yaml
-│   └── 03-monitoring.yaml
+│   ├── 03-monitoring.yaml
+│   ├── user-service.yaml
+│   ├── property-service.yaml
+│   ├── landlord-service.yaml
+│   ├── tenant-service.yaml
+│   ├── agreement-service.yaml
+│   ├── matching-service.yaml
+│   ├── notification-service.yaml
+│   ├── document-service.yaml
+│   ├── storage-controller.yaml
+│   ├── storage-worker-0.yaml
+│   ├── storage-worker-1.yaml
+│   ├── storage-worker-2.yaml
+│   ├── storage-worker-3.yaml
+│   └── api-gateway.yaml
 │
 ├── scripts/
 │   └── generate-proto.ps1
 │
+├── start-all.sh
+├── test-all.sh
+├── deploy-local.sh
 ├── compose.yaml
 ├── Dockerfile.user-service
 ├── Dockerfile.property-service
@@ -532,27 +563,6 @@ ListByLandlord
 
 Install:
 
-- Go
-- Git
-- Docker Desktop
-
-Verify:
-
-```powershell
-go version
-git --version
-docker version
-docker compose version
-```
-
----
-
-## Setup
-
-### Prerequisites
-
-Install these tools:
-
 - Go 1.26+ from https://go.dev/dl
 - Git from https://git-scm.com
 - Docker Desktop from https://www.docker.com/products/docker-desktop
@@ -563,7 +573,12 @@ Verify:
 go version
 git --version
 docker version
+docker compose version
 ```
+
+---
+
+## Setup
 
 ### Clone and install
 
@@ -649,9 +664,9 @@ The services use environment variables for configuration.
 
 Example:
 
-```powershell
-$env:MONGO_URI="mongodb://rentrelay:rentrelay@localhost:27017/rentrelay?authSource=admin"
-$env:MONGO_DATABASE="rentrelay"
+```bash
+export MONGO_URI="mongodb://rentrelay:rentrelay@localhost:27017/rentrelay?authSource=admin"
+export MONGO_DATABASE="rentrelay"
 ```
 
 Common variables:
@@ -679,14 +694,13 @@ Common variables:
 
 Start MongoDB locally:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
+```bash
 docker compose up -d mongodb
 ```
 
 Check status:
 
-```powershell
+```bash
 docker compose ps
 ```
 
@@ -714,23 +728,21 @@ mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin
 
 Start MongoDB:
 
-```powershell
+```bash
 docker compose up -d mongodb
 ```
 
 Start UserService:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
-$env:MONGO_URI="mongodb://rentrelay:rentrelay@localhost:27017/rentrelay?authSource=admin"
-$env:MONGO_DATABASE="rentrelay"
+```bash
+export MONGO_URI="mongodb://rentrelay:rentrelay@localhost:27017/rentrelay?authSource=admin"
+export MONGO_DATABASE="rentrelay"
 go run -buildvcs=false ./cmd/user-service
 ```
 
 In another terminal:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
+```bash
 go run -buildvcs=false ./cmd/user-smoke
 ```
 
@@ -747,23 +759,21 @@ login token prefix=dev-token
 
 Start MongoDB:
 
-```powershell
+```bash
 docker compose up -d mongodb
 ```
 
 Start PropertyService:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
-$env:MONGO_URI="mongodb://rentrelay:rentrelay@localhost:27017/rentrelay?authSource=admin"
-$env:MONGO_DATABASE="rentrelay"
+```bash
+export MONGO_URI="mongodb://rentrelay:rentrelay@localhost:27017/rentrelay?authSource=admin"
+export MONGO_DATABASE="rentrelay"
 go run -buildvcs=false ./cmd/property-service
 ```
 
 In another terminal:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
+```bash
 go run -buildvcs=false ./cmd/property-smoke
 ```
 
@@ -843,7 +853,6 @@ bash start-all.sh
 In a new terminal, start the gateway:
 
 ```bash
-cd "/mnt/d/e drive/RentRelay"
 go run -buildvcs=false ./cmd/api-gateway
 ```
 
@@ -869,12 +878,113 @@ curl -s -X POST http://localhost:8080/api/agreements \
 
 ---
 
+## Kubernetes Deployment (Minikube)
+
+This deploys the full RentRelay stack on a local Kubernetes cluster using Minikube.
+
+### Prerequisites
+
+Install Minikube:
+
+```bash
+curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+minikube version
+```
+
+kubectl comes with Docker Desktop. Verify:
+
+```bash
+kubectl version --client
+```
+
+### Deploy
+
+```bash
+# Start Minikube
+minikube start --driver=docker
+
+# Point Docker to Minikube internal registry
+eval $(minikube docker-env)
+
+# Create namespace and config
+kubectl apply -f k8s/00-namespace-config.yaml
+
+# Create MongoDB secret (paste your MongoDB URI when prompted)
+read -s -p "Paste MongoDB URI: " MONGO_URI
+kubectl create secret generic rentrelay-secrets \
+  --namespace=rentrelay \
+  --from-literal=MONGO_URI="$MONGO_URI"
+unset MONGO_URI
+
+# Run the full automated deploy script
+bash deploy-local.sh
+```
+
+### Check all pods are running
+
+```bash
+kubectl get pods -n rentrelay
+```
+
+Expected — all 15 pods showing Running:
+
+```text
+agreement-service       Running
+api-gateway             Running
+document-service        Running
+landlord-service        Running
+matching-service        Running
+notification-service    Running
+property-service        Running
+storage-controller      Running
+storage-worker-0        Running
+storage-worker-1        Running
+storage-worker-2        Running
+storage-worker-3        Running
+tenant-service          Running
+user-service            Running
+```
+
+### Access the API
+
+```bash
+kubectl port-forward -n rentrelay service/api-gateway 8080:8080
+```
+
+In another terminal:
+
+```bash
+curl http://localhost:8080/health
+```
+
+### Check logs
+
+```bash
+kubectl logs -n rentrelay deployment/user-service
+kubectl logs -n rentrelay deployment/agreement-service
+kubectl logs -n rentrelay deployment/storage-worker-0
+```
+
+### Stop Minikube
+
+```bash
+minikube stop
+```
+
+### Delete everything
+
+```bash
+minikube delete
+```
+
+---
+
 ## Run Tests
 
 From the Go module root:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
+```bash
 go test -buildvcs=false ./...
 ```
 
@@ -904,32 +1014,31 @@ cmd/property-service
 
 Build the image:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
+```bash
 docker build -f Dockerfile.user-service -t rentrelay/user-service:local .
 ```
 
 Run MongoDB:
 
-```powershell
+```bash
 docker compose up -d mongodb
 ```
 
 Run UserService container:
 
-```powershell
-docker run --rm `
-  --name rentrelay-user-service `
-  --network rentrelay_default `
-  -e MONGO_URI="mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin" `
-  -e MONGO_DATABASE="rentrelay" `
-  -p 50051:50051 `
+```bash
+docker run --rm \
+  --name rentrelay-user-service \
+  --network rentrelay_default \
+  -e MONGO_URI="mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin" \
+  -e MONGO_DATABASE="rentrelay" \
+  -p 50051:50051 \
   rentrelay/user-service:local
 ```
 
 Run smoke client:
 
-```powershell
+```bash
 go run -buildvcs=false ./cmd/user-smoke
 ```
 
@@ -939,32 +1048,31 @@ go run -buildvcs=false ./cmd/user-smoke
 
 Build the image:
 
-```powershell
-cd C:\IIITB\Academics\RentRelay\rentrelay
+```bash
 docker build -f Dockerfile.property-service -t rentrelay/property-service:local .
 ```
 
 Run MongoDB:
 
-```powershell
+```bash
 docker compose up -d mongodb
 ```
 
 Run PropertyService container:
 
-```powershell
-docker run --rm `
-  --name rentrelay-property-service `
-  --network rentrelay_default `
-  -e MONGO_URI="mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin" `
-  -e MONGO_DATABASE="rentrelay" `
-  -p 50052:50052 `
+```bash
+docker run --rm \
+  --name rentrelay-property-service \
+  --network rentrelay_default \
+  -e MONGO_URI="mongodb://rentrelay:rentrelay@mongodb:27017/rentrelay?authSource=admin" \
+  -e MONGO_DATABASE="rentrelay" \
+  -p 50052:50052 \
   rentrelay/property-service:local
 ```
 
 Run smoke client:
 
-```powershell
+```bash
 go run -buildvcs=false ./cmd/property-smoke
 ```
 
@@ -988,19 +1096,19 @@ PropertyService
 
 Typical command:
 
-```powershell
+```bash
 docker compose up --build
 ```
 
 Stop containers:
 
-```powershell
+```bash
 docker compose down
 ```
 
 Stop containers and remove volumes:
 
-```powershell
+```bash
 docker compose down -v
 ```
 
@@ -1031,50 +1139,28 @@ Only use `-v` when you are okay deleting local MongoDB data.
 
 ## Common Issues
 
-### `go test ./...` says module not found
-
-Run Go commands from:
-
-```powershell
-C:\IIITB\Academics\RentRelay\rentrelay
-```
-
-because this is where `go.mod` exists.
-
-The outer folder is the Git repository root.
-
 ### Port already in use
 
-Example:
+```bash
+# Check which process is using the port
+lsof -t -i:50051
 
-```text
-listen tcp :50052: bind: Only one usage of each socket address is normally permitted
-```
-
-Check the process:
-
-```powershell
-netstat -ano | findstr :50052
-```
-
-Kill it:
-
-```powershell
-taskkill /PID <PID> /F
+# Kill it
+kill $(lsof -t -i:50051)
 ```
 
 ### MongoDB connection refused
 
 Start MongoDB first:
 
-```powershell
+```bash
 docker compose up -d mongodb
 docker compose ps
 ```
 
 Then start the service.
 
-### `localhost` vs `mongodb`
+### localhost vs mongodb
 
 From your host machine:
 
@@ -1086,6 +1172,22 @@ From another Docker container:
 
 ```text
 mongodb:27017
+```
+
+### Minikube pods stuck in Pending
+
+Check available resources:
+
+```bash
+minikube status
+kubectl describe pod <pod-name> -n rentrelay
+```
+
+Restart Minikube with more memory:
+
+```bash
+minikube delete
+minikube start --driver=docker --memory=4096 --cpus=2
 ```
 
 ---
@@ -1113,7 +1215,7 @@ Usual workflow:
 
 Useful commands:
 
-```powershell
+```bash
 gofmt -w internal/property/service.go
 go test -buildvcs=false ./...
 git status
@@ -1124,41 +1226,36 @@ git push
 
 ---
 
-## Architecture Goal
-
-The final system is planned as:
+## Architecture
 
 ```text
-Client
+Client (curl / Postman / browser)
   |
-  | REST/JSON
+  | HTTP/JSON
   v
-API Gateway
+API Gateway (:8080)
   |
   | gRPC
   v
-Microservices
+┌─────────────────────────────────────────────┐
+│  User Service          (:50051)             │
+│  Property Service      (:50052)             │
+│  Landlord Service      (:50053)             │
+│  Tenant Service        (:50054)             │
+│  Agreement Service     (:50055)             │
+│  Matching Service      (:50056)             │
+│  Notification Service  (:50057)             │
+│  Document Service      (:50058)             │
+│  Storage Controller    (:50060)             │
+│  Storage Workers x4    (:50061-50063)       │
+└─────────────────────────────────────────────┘
   |
-  | MongoDB / custom storage / async messaging
+  | MongoDB driver / gRPC / WAL
   v
-Data and infrastructure layer
+MongoDB + Distributed Storage (quorum writes)
 ```
 
-Planned service map:
-
-```text
-User Service
-Property Service
-Landlord Service
-Tenant Service
-Matching Service
-Agreement Service
-Notification Service
-Document Service
-Storage Controller
-Storage Workers
-API Gateway (implemented)
-```
+All services communicate internally via gRPC. External clients use HTTP/JSON through the API Gateway which translates to gRPC.
 
 ---
 
@@ -1185,6 +1282,8 @@ Completed learning milestones:
 16. Integrated Agreement Service with distributed storage replication and quorum writes
 17. Wrote Dockerfiles for all 11 services using multi-stage builds
 18. Set up GitHub Actions CI/CD pipeline that tests, builds, and pushes on every commit
+19. Deployed all 15 pods on Kubernetes using Minikube with full validation
+20. Verified live HTTP API calls through REST gateway backed by gRPC microservices on Kubernetes
 ```
 
 ---
@@ -1196,14 +1295,22 @@ RentRelay is a cloud-native rental agreement platform built with Go, gRPC, Proto
 Current implemented milestone:
 
 ```text
-Implemented eleven Go-based gRPC microservices and a REST API gateway for a cloud-native rental platform, with protobuf contracts, MongoDB persistence, distributed storage with WAL crash recovery and 2-of-3 quorum writes, dead worker watchdog, agreement replication with dual writes and disaster recovery fallback, multi-stage Docker builds for all services, and a GitHub Actions CI/CD pipeline that automatically tests, builds, and pushes all images on every commit.
+Implemented eleven Go-based gRPC microservices and a REST API gateway for a cloud-native rental platform, with protobuf contracts, MongoDB persistence, distributed storage with WAL crash recovery and 2-of-3 quorum writes, dead worker watchdog, agreement replication with dual writes and disaster recovery fallback, multi-stage Docker builds for all services, a GitHub Actions CI/CD pipeline that automatically tests and publishes 11 Docker images on every commit, and full Kubernetes deployment validated on Minikube with 15 running pods and live API verification.
 ```
 
 Possible resume bullet:
 
 ```text
-Built a cloud-native rental backend in Go with gRPC, Protocol Buffers, MongoDB, Docker, Kubernetes, and GitHub Actions CI/CD, implementing eleven microservices, partitioned distributed storage with quorum writes, WAL crash recovery, heartbeat watchdog, agreement replication with automatic fallback, a REST API gateway, and a fully automated pipeline that tests and publishes 11 Docker images on every push.
+Built a cloud-native rental backend in Go with gRPC, Protocol Buffers, MongoDB, Docker, Kubernetes, and GitHub Actions CI/CD, implementing eleven microservices, partitioned distributed storage with quorum writes, WAL crash recovery, heartbeat watchdog, agreement replication with automatic fallback, a REST API gateway, a fully automated pipeline that tests and publishes 11 Docker images on every push, and a validated Kubernetes deployment with 15 pods verified via live HTTP API calls.
 ```
+
+---
+
+## Built By
+
+Akshat Batra — https://github.com/AkiBatra25
+
+Harshita Bansal — https://github.com/Harshita30-bansal
 
 ---
 
